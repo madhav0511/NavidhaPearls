@@ -12,6 +12,7 @@
 - `Product`: id, name, category, material, price, description, details, image, alt, tag.
 - `CartItem`: product plus quantity, held in Home page state for the demo session.
 - Craft stories are static local content for Thewa colored-glass gold and silver jewelry, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
+- The Philosophy section uses the supplied upper-body portrait, cropped to retain the face, pearl collar, and central silver floral brooch.
 
 ## Key flows
 1. Hero CTA scrolls to the collection.

@@ -189,7 +189,7 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .material-points span { color: #b8c0c8; font-size: 11px; margin-top: 3px; }
 .philosophy-section { align-items: center; display: grid; gap: clamp(40px, 9vw, 140px); grid-template-columns: minmax(280px, .8fr) 1fr; margin: 0 auto; max-width: 1440px; }
 .philosophy-image { aspect-ratio: 4 / 5; max-height: 650px; overflow: hidden; }
-.philosophy-image img { filter: saturate(.7); height: 100%; object-fit: cover; width: 100%; }
+.philosophy-image img { filter: saturate(.82) contrast(.96); height: 100%; object-fit: cover; object-position: center 29%; width: 100%; }
 .waitlist-section { background: #2b4257; padding: 120px 20px; text-align: center; }
 .waitlist-inner { margin: auto; max-width: 740px; }
 .launch-popup-overlay { align-items: center; background: rgba(20,32,46,.68); display: grid; inset: 0; justify-items: center; padding: 24px; position: fixed; z-index: 60; backdrop-filter: blur(8px); }
