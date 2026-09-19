@@ -1,0 +1,104 @@
+{
+  "project_name": "Navidha - Premium Jewelry Reimagined",
+  "app_type": "e-commerce",
+  "design_archetype": "Luxury Editorial & Craft Heritage",
+  "theme": {
+    "primary_mode": "Light Editorial with Dark Ink Accents",
+    "background_light": "#FBF9F5",
+    "background_dark": "#14202E",
+    "surface_card": "#FFFFFF",
+    "text_primary": "#14202E",
+    "text_secondary": "#4A596A",
+    "accent_gold": "#C8A45D",
+    "accent_gold_hover": "#B38E46",
+    "slate_blue": "#2B4257",
+    "powder_blue": "#88A9C3",
+    "soft_border": "rgba(200, 164, 93, 0.2)"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Cormorant Garamond, Playfair Display, serif",
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-serif tracking-tight leading-tight",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-serif tracking-tight",
+      "h3": "text-xl sm:text-2xl font-serif",
+      "h4": "text-lg sm:text-xl font-serif"
+    },
+    "body": {
+      "font_family": "Geist Variable, Inter, sans-serif",
+      "size": "text-base sm:text-sm text-[#4A596A] leading-relaxed"
+    },
+    "labels": {
+      "style": "uppercase text-xs font-semibold tracking-[0.2em] text-[#C8A45D]"
+    }
+  },
+  "layout_and_spacing": {
+    "container_padding": "px-4 sm:px-8 lg:px-16",
+    "section_margin": "py-16 lg:py-24",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 lg:gap-8",
+    "card_padding": "p-6 lg:p-8",
+    "border_radius": "rounded-none sm:rounded-sm"
+  },
+  "key_components": [
+    {
+      "name": "Navigation Header",
+      "description": "Sticky top bar with semi-opaque dark ink backdrop (`bg-[#14202E]/95 backdrop-blur-md`), brand logo, category tabs, currency switcher, and cart drawer button with item counter badge.",
+      "testid": "navbar"
+    },
+    {
+      "name": "Hero Banner",
+      "description": "Editorial split hero with rich narrative statement ('Jewelry, Reimagined'), gold accents, and direct CTA to explore collections or launch story.",
+      "testid": "hero-section"
+    },
+    {
+      "name": "Heritage Craft Explorer",
+      "description": "Interactive showcase highlighting traditional Indian craft techniques: Thewa (Pratapgarh), Hupari Silver (Kolhapur), Gulabi Meenakari (Varanasi), Karimnagar Silver Filigree, and Odisha Silver Filigree.",
+      "testid": "heritage-craft-section"
+    },
+    {
+      "name": "Product Catalog & Filtering",
+      "description": "Searchable, multi-filterable grid supporting craft type, material (925 Silver, Champagne Gold, Pearls), category (Pendants, Necklaces, Rings, Bracelets), price range, and sorting options.",
+      "testid": "product-catalog-grid"
+    },
+    {
+      "name": "Product Card",
+      "description": "Luxury product card with dual image hover effect, material tags, price in INR/USD, quick add to bag button, and wishlist toggle.",
+      "testid": "product-card"
+    },
+    {
+      "name": "Product Details Modal / View",
+      "description": "Detailed modal displaying multi-angle image gallery, material authentication specs (925 Silver hallmark, hand-enameling note), sizing guide, and customer reviews.",
+      "testid": "product-detail-modal"
+    },
+    {
+      "name": "Cart Drawer & Review",
+      "description": "Slide-over drawer with item list, quantity adjusters, gift wrapping / custom message input, coupon code validation, subtotal calculation, and instant checkout preview modal.",
+      "testid": "cart-drawer"
+    }
+  ],
+  "image_urls": {
+    "hero_banner": "https://images.unsplash.com/photo-1613966561243-c6959a886009?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "craft_thewa": "https://images.unsplash.com/photo-1611955167811-4711904bb9f8?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "craft_hupari": "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "craft_meenakari": "https://images.unsplash.com/photo-1674465992629-f8f81a8fb6d9?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "craft_karimnagar": "https://images.pexels.com/photos/30541177/pexels-photo-30541177.jpeg?auto=compress&cs=tinysrgb&q=85",
+    "craft_odisha": "https://images.pexels.com/photos/30541171/pexels-photo-30541171.jpeg?auto=compress&cs=tinysrgb&q=85",
+    "pearl_necklace": "https://images.unsplash.com/photo-1611652032931-10fc009c980a?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "gold_rings": "https://images.unsplash.com/photo-1720093601709-66ce9c0068a1?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "pearl_model": "https://images.pexels.com/photos/10681031/pexels-photo-10681031.jpeg?auto=compress&cs=tinysrgb&q=85"
+  },
+  "motion_and_interactions": {
+    "hover_state": "Transition duration 300ms ease, subtle scale on card image (`group-hover:scale-105`), subtle border highlight on cards.",
+    "modal_animation": "Fade in with backdrop blur and smooth scale up from 95% to 100%.",
+    "toast_notifications": "Trigger Sonner toast on 'Add to Bag' and 'Save to Wishlist' actions with custom dark ink style."
+  },
+  "instructions_to_main_agent": [
+    "Preserve and build upon the Navidha brand identity using warm ivory (#FBF9F5), deep navy ink (#14202E), and champagne gold (#C8A45D).",
+    "Do NOT use pure transparent backgrounds for headers, dropdowns, or popovers; always use semi-opaque background with backdrop blur.",
+    "Implement comprehensive data-testid attributes on all interactive elements: inputs, buttons, filter toggles, product cards, cart items, and modals.",
+    "Provide complete local state management for filtering, search, quick view modal, cart drawer (item quantity, removal, promo code), and mock checkout workflow.",
+    "Ensure high contrast and accessibility compliance across all light and dark text combinations."
+  ]
+},
+overwrite: true,
+path: "/app/design_guidelines.json"
+}広い`} Schwarzt

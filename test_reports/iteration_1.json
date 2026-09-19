@@ -1,0 +1,67 @@
+{
+  "passed": 8,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [
+    "Backend suite completed with no collected tests; the acceptance matrix contains no backend API behavior beyond the existing connectivity route."
+  ],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "Navidha storefront renders the redesign shell with supplied logo, premium editorial hero, navigation, craft heritage section, collection section, philosophy, and launch section",
+      "name": "navidha-storefront-shell",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Rendered / with hero title, collection, craft, philosophy, and waitlist sections visible; navigation clicks reached #collection and #craft."
+    },
+    {
+      "criterion": "Catalog supports browsing and category filtering",
+      "name": "catalog-category-filtering",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Category Rings changed result count from 8 pieces to 2 and showed Gulabi Bloom Ring while hiding Moonlit Pearl Collar."
+    },
+    {
+      "criterion": "Catalog supports material filtering, search, and sorting",
+      "name": "catalog-controls-update-edit",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Pearls filtered to 2, search Moonlit filtered to 1, price sort remained usable, and Clear filters restored 8 pieces. Initial assertion expected singular grammar; rerun with rendered UI text passed."
+    },
+    {
+      "criterion": "A product opens a detail view",
+      "name": "product-detail-modal-opens",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Moonlit Pearl Collar modal displayed name, Pearls material/category, INR 14,800 price, description, specs, and close control."
+    },
+    {
+      "criterion": "Customer can add a product to the shopping bag",
+      "name": "product-adds-to-bag",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Detail Add to bag updated navbar count to 1, opened the bag, and displayed success toast."
+    },
+    {
+      "criterion": "Customer can review and edit the shopping bag",
+      "name": "shopping-bag-editing",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Bag listed Quiet Arc Hoops; increase changed quantity to 2, subtotal displayed INR 14,400, and remove returned to empty state."
+    },
+    {
+      "criterion": "Waitlist interaction works as a local demo",
+      "name": "waitlist-local-submit",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Valid email submission displayed 'You are on the list' and kept the waitlist section usable; this is intentionally a LOCAL DEMO interaction."
+    },
+    {
+      "criterion": "Responsive mobile layout remains usable",
+      "name": "mobile-nav-and-drawer",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "At 390x844 mobile viewport, navigation toggle opened mobile navigation, collection link navigated, detail modal fit, and bag drawer opened."
+    }
+  ]
+}
