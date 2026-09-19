@@ -13,6 +13,7 @@
 - `CartItem`: product plus quantity, held in Home page state for the demo session.
 - Craft stories are static local content for Thewa colored-glass gold and silver jewelry, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
 - The Philosophy section uses the supplied upper-body portrait, cropped to retain the face, pearl collar, and central silver floral brooch.
+- The full-screen Campaign Gallery contains two supplied Navidha pearl portraits and three matching generated editorial images, each with a title and caption.
 
 ## Key flows
 1. Hero CTA scrolls to the collection.
@@ -23,6 +24,7 @@
 4. Bag button opens the cart drawer; quantity controls and remove actions update the subtotal.
 5. Preview checkout shows a browser alert because payments are intentionally not integrated.
 6. A centered fixed launch popup opens on landing with “We will be Live Soon”; the visitor can close it or use its preview CTA, and it stays fixed while scrolling until dismissed.
+7. Campaign links in desktop/mobile navigation and the Philosophy section open a cinematic full-screen lightbox with arrows, keyboard navigation, captions, counter, and thumbnail selection.
 
 ## Auth and integrations
 - No authentication, accounts, or gated areas.
