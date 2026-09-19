@@ -172,14 +172,23 @@ export const craftStories: CraftStory[] = [
     name: "Silver Filigree from Karimnagar",
     location: "(Telangana)",
     description: "Fine silver filigree shaped by patient hands into intricate patterns of remarkable delicacy.",
-    image: "https://images.pexels.com/photos/30541177/pexels-photo-30541177.jpeg?auto=compress&cs=tinysrgb&q=85",
+    image: "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/sf5fr55d_image.png",
+    images: [
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/sf5fr55d_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/hpch98m7_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/f5i8oxz3_image.png",
+    ],
   },
   {
     id: "cuttack",
     name: "Silver Filigree from Cuttack",
     location: "(Odisa)",
     description: "An intricate tradition of fine silver work, celebrated for delicate forms and distinctive Odia artistry.",
-    image: "https://images.pexels.com/photos/30541171/pexels-photo-30541171.jpeg?auto=compress&cs=tinysrgb&q=85",
+    image: "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/0ifs0b9b_image.png",
+    images: [
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/0ifs0b9b_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/qwq6a4b8_image.png",
+    ],
   },
 ];
 
