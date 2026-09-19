@@ -148,7 +148,12 @@ export const craftStories: CraftStory[] = [
     name: "Silver Jewelry",
     location: "Hupari, Kolhapur (Maharastra)",
     description: "Handcrafted silver forms carry the enduring character of Hupari, made to be lived in.",
-    image: imageUrl("photo-1543294001-f7cd5d7fb516"),
+    image: "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/r2f4nzo9_image.png",
+    images: [
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/r2f4nzo9_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/e4jkxttn_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/pgz3deky_image.png",
+    ],
   },
   {
     id: "meenakari",
