@@ -11,7 +11,8 @@
 ## Data model
 - `Product`: id, name, category, material, price, description, details, image, alt, tag.
 - `CartItem`: product plus quantity, held in Home page state for the demo session.
-- Craft stories are static local content for Thewa colored-glass gold and silver jewelry, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
+- Craft stories include Thewa colored-glass jewelry with gold and silver, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
+- The Thewa card cycles through three supplied campaign images every four seconds and includes manual previous/next arrows plus position dots.
 - The Philosophy section uses the supplied upper-body portrait, cropped to retain the face, pearl collar, and central silver floral brooch.
 - The full-screen Campaign Gallery contains two supplied Navidha pearl portraits and three matching generated editorial images, each with a title and caption.
 

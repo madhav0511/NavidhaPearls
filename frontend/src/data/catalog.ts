@@ -20,6 +20,7 @@ export interface CraftStory {
   location: string;
   description: string;
   image: string;
+  images?: string[];
 }
 
 const imageUrl = (id: string) =>
@@ -132,10 +133,15 @@ export const products: Product[] = [
 export const craftStories: CraftStory[] = [
   {
     id: "thewa",
-    name: "Colored Glasses Gold & Silver Jewelry",
+    name: "Colored Glasses Jewelry with Gold & Silver",
     location: "Thewa, Pratapgarh (Rajasthan)",
     description: "A luminous meeting of colored glass with gold and silver jewelry, rooted in the celebrated Thewa tradition.",
-    image: imageUrl("photo-1611955167811-4711904bb9f8"),
+    image: "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/qg4zt94l_image.png",
+    images: [
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/qg4zt94l_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/h3qdnm85_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/cz9ublf7_image.png",
+    ],
   },
   {
     id: "hupari",

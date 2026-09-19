@@ -160,9 +160,17 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .craft-card { min-height: 430px; overflow: hidden; position: relative; }
 .craft-card img { filter: saturate(.74); height: 100%; object-fit: cover; position: absolute; transition: transform .8s cubic-bezier(.2,.65,.2,1); width: 100%; }
 .craft-card:hover img { transform: scale(1.06); }
+.craft-card-slide { animation: craft-slide-in 500ms ease both; }
 .craft-card::after { background: linear-gradient(180deg, transparent 30%, rgba(20,32,46,.88)); content: ''; inset: 0; position: absolute; }
 .craft-card-overlay { align-items: end; bottom: 0; display: flex; gap: 20px; justify-content: space-between; padding: 28px; position: absolute; width: 100%; z-index: 1; }
 .craft-card-featured { min-height: 560px; }
+.craft-card-dots { display: flex; gap: 7px; left: 24px; position: absolute; top: 24px; z-index: 3; }
+.craft-card-dot { background: rgba(248,241,228,.48); border: 1px solid rgba(20,32,46,.25); border-radius: 999px; height: 7px; transition: background 200ms ease, width 200ms ease; width: 7px; }
+.craft-card-dot-active { background: #c8a45d; width: 22px; }
+.craft-card-arrows { display: flex; gap: 7px; position: absolute; right: 24px; top: 20px; z-index: 3; }
+.craft-card-arrow { align-items: center; background: rgba(20,32,46,.72); border: 1px solid rgba(248,241,228,.35); color: #f8f1e4; display: grid; height: 34px; justify-items: center; transition: background 220ms ease, color 220ms ease; width: 34px; }
+.craft-card-arrow:hover { background: #c8a45d; color: #14202e; }
+@keyframes craft-slide-in { from { opacity: .35; transform: scale(1.03); } to { opacity: 1; transform: scale(1); } }
 .catalog-toolbar { align-items: center; border-bottom: 1px solid rgba(20,32,46,.13); border-top: 1px solid rgba(20,32,46,.13); display: flex; gap: 24px; justify-content: space-between; margin: 0 auto 24px; max-width: 1440px; padding: 16px 0; }
 .category-tabs { display: flex; gap: 19px; overflow-x: auto; scrollbar-width: none; }
 .category-tabs::-webkit-scrollbar { display: none; }
