@@ -160,7 +160,12 @@ export const craftStories: CraftStory[] = [
     name: "Gulabi Meenakari",
     location: "Varanasi (Uttar Pradesh)",
     description: "Delicate pink enamel brings a gentle, joyful note to intricate traditional ornamentation.",
-    image: imageUrl("photo-1674465992629-f8f81a8fb6d9"),
+    image: "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/fm9nq9sh_image.png",
+    images: [
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/fm9nq9sh_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/ocjluhap_image.png",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/jvl1w221_image.png",
+    ],
   },
   {
     id: "karimnagar",
