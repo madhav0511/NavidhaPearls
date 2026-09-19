@@ -1,0 +1,60 @@
+{
+  "passed": 7,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [
+    "No backend API-bearing criteria in this matrix; the eight product image galleries live entirely in frontend/src/data/catalog.ts as static local data, so no new backend test file was needed."
+  ],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "Every House Collection title is paired with imagery relevant to its named jewelry type and material",
+      "name": "collection-imagery-loads-per-product",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "All 8 product card main images loaded (naturalWidth=1200) with alt text matching each product's type/material, e.g. moonlit-pearl-collar alt='Luminous pearl necklace on ivory silk, view 1', thewa-sun-pendant alt='Warm gold pendant...', silver-tide-cuff alt='Modern silver cuff bracelet...'."
+    },
+    {
+      "criterion": "Every House Collection product has three working card images",
+      "name": "product-card-three-images-cycle",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "For all 8 products: exactly 3 position dots rendered, each dot click loaded a distinct image (naturalWidth>0, 3 unique srcs), next/previous arrows changed and restored the image, and no product-detail-modal opened from any of these controls."
+    },
+    {
+      "criterion": "Product text content remains unchanged",
+      "name": "product-text-content-unchanged",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "All 8 product names, materials, and formatted INR prices (e.g. Moonlit Pearl Collar/Pearls/14,800 ... Golden Hour Chain/Champagne Gold/13,400) verified present on their respective product-id-keyed testids."
+    },
+    {
+      "criterion": "Product detail modal provides a complete three-image gallery",
+      "name": "product-detail-three-image-gallery",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Opened Silver Tide Cuff detail: 3 thumbnails rendered; image counter progressed 1/3 -> 2/3 (thumbnail) -> 3/3 (next arrow, loaded naturalWidth>0) -> 2/3 (previous) -> 1/3 (thumbnail 1) with main image src changing/returning correctly each step."
+    },
+    {
+      "criterion": "Card and detail controls remain usable without accidental navigation",
+      "name": "card-controls-no-accidental-navigation",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Thewa Sun Pendant: card next/previous arrows and dot 2 click did not open product-detail-modal; clicking the card image opened the modal with matching name; modal next-button changed image while staying open; close button closed it."
+    },
+    {
+      "criterion": "Browse-to-cart flow still works after gallery changes",
+      "name": "browse-card-to-cart-flow",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Cycled Gulabi Bloom Ring card images (next arrow + dot 3, no modal opened), opened detail, clicked Add to bag -> cart-drawer auto-opened with navbar-cart-count=1 and cart-item-name-gulabi-bloom-ring='Gulabi Bloom Ring'."
+    },
+    {
+      "criterion": "Product galleries are usable on mobile",
+      "name": "mobile-product-gallery-usability",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "At 390x844: River Pearl Drop card next-arrow and dot changed image without opening the modal; opening details showed 3 thumbnails, close button, name and description visible; thumbnail 2 click updated main image; close button closed the modal."
+    }
+  ]
+}

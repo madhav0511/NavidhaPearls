@@ -1,4 +1,5 @@
-import { ArrowUpRight, Heart, ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/data/catalog";
@@ -12,6 +13,11 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onSelect, onAdd, index }: ProductCardProps) {
+  const [activeImage, setActiveImage] = useState(0);
+  const images = product.images.length ? product.images : [product.image];
+  const showPrevious = () => setActiveImage((current) => (current - 1 + images.length) % images.length);
+  const showNext = () => setActiveImage((current) => (current + 1) % images.length);
+
   return (
     <article className="product-card group" data-testid={`product-card-${product.id}`}>
       <div className="relative overflow-hidden bg-[#f0ebe3]">
@@ -23,14 +29,20 @@ export default function ProductCard({ product, onSelect, onAdd, index }: Product
           data-testid={`product-view-${product.id}`}
         >
           <img
-            src={product.image}
-            alt={product.alt}
+            key={`${product.id}-${activeImage}`}
+            src={images[activeImage]}
+            alt={`${product.alt}, view ${activeImage + 1}`}
             loading={index < 4 ? "eager" : "lazy"}
-            className="aspect-[4/5] w-full object-cover"
+            className="product-card-slide aspect-[4/5] w-full object-cover"
             data-testid={`product-image-${product.id}`}
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#14202e]/35 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </button>
+        <button type="button" onClick={showPrevious} className="product-card-arrow product-card-arrow-left" aria-label={`Previous ${product.name} image`} data-testid={`product-image-previous-${product.id}`}><ChevronLeft size={16} /></button>
+        <button type="button" onClick={showNext} className="product-card-arrow product-card-arrow-right" aria-label={`Next ${product.name} image`} data-testid={`product-image-next-${product.id}`}><ChevronRight size={16} /></button>
+        <div className="product-card-dots" data-testid={`product-image-dots-${product.id}`}>
+          {images.map((_, imageIndex) => <button type="button" key={`${product.id}-image-${imageIndex}`} onClick={() => setActiveImage(imageIndex)} className={`product-card-dot ${imageIndex === activeImage ? "product-card-dot-active" : ""}`} aria-label={`Show ${product.name} image ${imageIndex + 1}`} aria-current={imageIndex === activeImage} data-testid={`product-image-dot-${product.id}-${imageIndex + 1}`} />)}
+        </div>
         <Badge className="absolute left-4 top-4 rounded-none border-0 bg-[#fbf9f5]/90 px-3 py-1 font-sans text-[9px] uppercase tracking-[0.18em] text-[#14202e] shadow-none">
           {product.tag}
         </Badge>

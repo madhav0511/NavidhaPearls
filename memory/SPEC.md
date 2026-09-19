@@ -9,7 +9,7 @@
 - Join the launch waitlist through a local demo toast; no external integrations or order submission are connected.
 
 ## Data model
-- `Product`: id, name, category, material, price, description, details, image, alt, tag.
+- `Product`: id, name, category, material, price, description, details, primary image, three-image gallery, alt text, and tag.
 - `CartItem`: product plus quantity, held in Home page state for the demo session.
 - Craft stories include Thewa colored-glass jewelry with gold and silver, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
 - The Thewa card cycles through three supplied campaign images every four seconds and includes manual previous/next arrows plus position dots.
@@ -25,6 +25,8 @@
    - The hero uses the supplied portrait of an Indian woman wearing layered silver and pearl jewelry, with a responsive focal crop preserving both face and necklace.
 2. Collection controls filter/search/sort the local product catalog.
 3. Product image/title opens the detail modal; Add to bag updates the local cart and shows a Sonner toast.
+   - Every House Collection product has three curated images matched to its title and material.
+   - Product cards provide arrows and dots; the detail modal provides arrows, image count, and three selectable thumbnails.
 4. Bag button opens the cart drawer; quantity controls and remove actions update the subtotal.
 5. Preview checkout shows a browser alert because payments are intentionally not integrated.
 6. A centered fixed launch popup opens on landing with “We will be Live Soon”; the visitor can close it or use its preview CTA, and it stays fixed while scrolling until dismissed.

@@ -10,6 +10,7 @@ export interface Product {
   description: string;
   details: string;
   image: string;
+  images: string[];
   alt: string;
   tag: string;
 }
@@ -41,7 +42,12 @@ export const products: Product[] = [
     tag: "New chapter",
     description: "A soft strand of freshwater pearls held in a sculptural silver embrace.",
     details: "Freshwater pearls · 925 silver clasp · 16–18 in adjustable chain",
-    image: imageUrl("photo-1611652032931-10fc009c980a"),
+    image: "https://images.unsplash.com/photo-1706092372553-63083273ad64?auto=format&fit=crop&w=1200&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1706092372553-63083273ad64?auto=format&fit=crop&w=1200&q=85",
+      "https://images.pexels.com/photos/20285790/pexels-photo-20285790.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/sj9panj4_image.png",
+    ],
     alt: "Luminous pearl necklace on ivory silk",
   },
   {
@@ -53,7 +59,12 @@ export const products: Product[] = [
     tag: "Crafted in India",
     description: "A small golden sun inspired by Thewa glasswork from Pratapgarh.",
     details: "18k champagne gold vermeil · hand-set glass · 20 in chain",
-    image: imageUrl("photo-1720093601709-66ce9c0068a1"),
+    image: "https://images.pexels.com/photos/38909347/pexels-photo-38909347.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    images: [
+      "https://images.pexels.com/photos/38909347/pexels-photo-38909347.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/13325937/pexels-photo-13325937.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.unsplash.com/photo-1705206548360-04e6982a7a42?auto=format&fit=crop&w=1200&q=85",
+    ],
     alt: "Warm gold pendant arranged on a neutral surface",
   },
   {
@@ -65,8 +76,13 @@ export const products: Product[] = [
     tag: "Everyday icon",
     description: "A weightless, hand-finished arc that catches light with every turn.",
     details: "Hallmarked 925 silver · hypoallergenic posts · 28 mm drop",
-    image: imageUrl("photo-1611087388916-b6c97e01735b"),
-    alt: "Gold-toned hoop earrings resting on folded ivory fabric",
+    image: "https://images.pexels.com/photos/15799252/pexels-photo-15799252.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    images: [
+      "https://images.pexels.com/photos/15799252/pexels-photo-15799252.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/34372589/pexels-photo-34372589.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.unsplash.com/photo-1654868683503-20371fea64e8?auto=format&fit=crop&w=1200&q=85",
+    ],
+    alt: "Minimal silver hoop earrings",
   },
   {
     id: "gulabi-bloom-ring",
@@ -77,8 +93,13 @@ export const products: Product[] = [
     tag: "Limited edit",
     description: "A blush enamel bloom that nods to the colour and precision of Varanasi.",
     details: "Champagne gold finish · hand-enamelled detail · adjustable band",
-    image: imageUrl("photo-1702476320482-0736c4b962f5"),
-    alt: "Delicate gold ring on a pale surface",
+    image: "https://images.pexels.com/photos/11567607/pexels-photo-11567607.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    images: [
+      "https://images.pexels.com/photos/11567607/pexels-photo-11567607.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.unsplash.com/photo-1549048799-bf3b582ee17b?auto=format&fit=crop&w=1200&q=85",
+      "https://images.pexels.com/photos/12486667/pexels-photo-12486667.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    ],
+    alt: "Pink gemstone and gold bloom ring",
   },
   {
     id: "silver-tide-cuff",
@@ -89,8 +110,13 @@ export const products: Product[] = [
     tag: "Navidha Silver",
     description: "An architectural cuff with a quiet strength, shaped to sit close to the wrist.",
     details: "Tarnish-resistant 925 silver · hand-polished · open fit",
-    image: imageUrl("photo-1543294001-f7cd5d7fb516"),
-    alt: "Silver jewelry detail in a soft blue-gray setting",
+    image: "https://images.pexels.com/photos/33858027/pexels-photo-33858027.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    images: [
+      "https://images.pexels.com/photos/33858027/pexels-photo-33858027.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/9145353/pexels-photo-9145353.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/pgz3deky_image.png",
+    ],
+    alt: "Modern silver cuff bracelet",
   },
   {
     id: "river-pearl-drop",
@@ -101,8 +127,13 @@ export const products: Product[] = [
     tag: "Soft luster",
     description: "One imperfectly beautiful pearl, suspended from a slender silver line.",
     details: "Freshwater pearl · sterling silver hook · 42 mm drop",
-    image: imageUrl("photo-1594823204889-68bcbb0e549e"),
-    alt: "Pearl and gold earrings in morning light",
+    image: "https://images.unsplash.com/photo-1654868683503-20371fea64e8?auto=format&fit=crop&w=1200&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1654868683503-20371fea64e8?auto=format&fit=crop&w=1200&q=85",
+      "https://images.pexels.com/photos/7406059/pexels-photo-7406059.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.unsplash.com/photo-1654699991494-892326ee8171?auto=format&fit=crop&w=1200&q=85",
+    ],
+    alt: "Freshwater pearl drop earrings",
   },
   {
     id: "filigree-heirloom-ring",
@@ -113,8 +144,13 @@ export const products: Product[] = [
     tag: "Heritage form",
     description: "Fine silver filigree translated into a ring that feels both old and new.",
     details: "Hallmarked 925 silver · Karimnagar-inspired filigree · sizes 6–10",
-    image: imageUrl("photo-1599643478518-a784e5dc4c8f"),
-    alt: "Fine silver ring with a sculptural surface",
+    image: "https://images.unsplash.com/photo-1586008604829-a16f775eec81?auto=format&fit=crop&w=1200&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1586008604829-a16f775eec81?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1594847267676-688b0579d562?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1602751584581-2e0372975b46?auto=format&fit=crop&w=1200&q=85",
+    ],
+    alt: "Ornate silver filigree ring",
   },
   {
     id: "golden-hour-chain",
@@ -125,8 +161,13 @@ export const products: Product[] = [
     tag: "Layering piece",
     description: "A fluid chain with a low, warm shine made for layering or standing alone.",
     details: "18k champagne gold vermeil · lobster clasp · 18 in length",
-    image: imageUrl("photo-1515562141207-7a88fb7ce338"),
-    alt: "Minimal gold chain jewelry on a neutral background",
+    image: "https://images.unsplash.com/photo-1665194107347-09adc17c92a7?auto=format&fit=crop&w=1200&q=85",
+    images: [
+      "https://images.unsplash.com/photo-1665194107347-09adc17c92a7?auto=format&fit=crop&w=1200&q=85",
+      "https://images.pexels.com/photos/32480611/pexels-photo-32480611.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/13660667/pexels-photo-13660667.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    ],
+    alt: "Minimal champagne gold chain necklace",
   },
 ];
 

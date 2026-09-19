@@ -9,6 +9,7 @@ import NavidhaLogo from "@/components/NavidhaLogo";
 import ProductCard from "@/components/ProductCard";
 import CampaignGallery from "@/components/CampaignGallery";
 import CraftCard from "@/components/CraftCard";
+import ProductDetailModal from "@/components/ProductDetailModal";
 import { craftStories, formatPrice, products, type Category, type Material, type Product } from "@/data/catalog";
 
 const categories: Array<"All" | Category> = ["All", "Pendants", "Necklaces", "Earrings", "Rings", "Bracelets"];
@@ -97,7 +98,7 @@ export default function Home() {
 
       <CartDrawer open={cartOpen} items={cartItems} onClose={() => setCartOpen(false)} onQuantityChange={changeQuantity} onRemove={removeItem} />
       <CampaignGallery open={campaignOpen} onClose={() => setCampaignOpen(false)} />
-      {selectedProduct && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#14202e]/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label={`${selectedProduct.name} details`} onClick={() => setSelectedProduct(null)} data-testid="product-detail-modal"><div className="product-modal" onClick={(event) => event.stopPropagation()} data-testid="product-detail-content"><button type="button" onClick={() => setSelectedProduct(null)} className="icon-button absolute right-4 top-4 z-10 bg-[#fbf9f5]/80" aria-label="Close product details" data-testid="product-detail-close-button"><X size={18} /></button><div className="grid md:grid-cols-2"><img src={selectedProduct.image} alt={selectedProduct.alt} className="h-full min-h-[330px] w-full object-cover" data-testid="product-detail-image" /><div className="flex flex-col justify-center p-7 sm:p-10"><p className="eyebrow text-[#9a7a3e]" data-testid="product-detail-material">{selectedProduct.material} · {selectedProduct.category}</p><h2 className="mt-4 font-serif text-4xl leading-tight" data-testid="product-detail-name">{selectedProduct.name}</h2><p className="mt-4 text-2xl font-light" data-testid="product-detail-price">{formatPrice(selectedProduct.price)}</p><p className="mt-6 text-sm leading-7 text-[#667383]" data-testid="product-detail-description">{selectedProduct.description}</p><div className="mt-6 border-y border-[#14202e]/10 py-4 text-xs leading-6 text-[#667383]" data-testid="product-detail-specs">{selectedProduct.details}</div><Button type="button" onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); setCartOpen(true); }} className="mt-7 h-12 rounded-none bg-[#14202e] font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-[#c8a45d] hover:text-[#14202e]" data-testid="product-detail-add-button">Add to bag</Button><p className="mt-4 text-center text-[10px] uppercase tracking-[0.16em] text-[#9a7a3e]" data-testid="product-detail-note">Wrapped with care · made to last</p></div></div></div></div>}
+      <ProductDetailModal key={selectedProduct?.id ?? "no-product"} product={selectedProduct} onClose={() => setSelectedProduct(null)} onAdd={(product) => { addToCart(product); setSelectedProduct(null); setCartOpen(true); }} />
     </div>
   );
 }
