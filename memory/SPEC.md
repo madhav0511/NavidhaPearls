@@ -14,7 +14,8 @@
 
 ## Key flows
 1. Hero CTA scrolls to the collection.
-   - Desktop hero is a compact 420px split layout with the “Navidha 2026” image stamp.
+   - Desktop hero is a compact 445px split layout with the “Navidha 2026” image stamp; the mobile image area is also 445px.
+   - The hero uses a Navidha-specific editorial portrait of an Indian woman wearing refined silver and pearl jewelry.
 2. Collection controls filter/search/sort the local product catalog.
 3. Product image/title opens the detail modal; Add to bag updates the local cart and shows a Sonner toast.
 4. Bag button opens the cart drawer; quantity controls and remove actions update the subtotal.
