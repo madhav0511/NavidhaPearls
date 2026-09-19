@@ -132,24 +132,38 @@ export const products: Product[] = [
 export const craftStories: CraftStory[] = [
   {
     id: "thewa",
-    name: "Thewa",
-    location: "Pratapgarh, Rajasthan",
-    description: "Gold craftsmanship meets richly coloured glass in a tradition born in the royal workshops of Rajasthan.",
+    name: "Colored Glasses Gold & Silver Jewelry",
+    location: "Thewa, Pratapgarh (Rajasthan)",
+    description: "A luminous meeting of colored glass with gold and silver jewelry, rooted in the celebrated Thewa tradition.",
     image: imageUrl("photo-1611955167811-4711904bb9f8"),
   },
   {
     id: "hupari",
-    name: "Hupari Silver",
-    location: "Kolhapur, Maharashtra",
-    description: "Handcrafted silver forms carry the enduring character of Maharashtra, made to be lived in.",
+    name: "Silver Jewelry",
+    location: "Hupari, Kolhapur (Maharastra)",
+    description: "Handcrafted silver forms carry the enduring character of Hupari, made to be lived in.",
     image: imageUrl("photo-1543294001-f7cd5d7fb516"),
   },
   {
     id: "meenakari",
     name: "Gulabi Meenakari",
-    location: "Varanasi, Uttar Pradesh",
+    location: "Varanasi (Uttar Pradesh)",
     description: "Delicate pink enamel brings a gentle, joyful note to intricate traditional ornamentation.",
     image: imageUrl("photo-1674465992629-f8f81a8fb6d9"),
+  },
+  {
+    id: "karimnagar",
+    name: "Silver Filigree from Karimnagar",
+    location: "(Telangana)",
+    description: "Fine silver filigree shaped by patient hands into intricate patterns of remarkable delicacy.",
+    image: "https://images.pexels.com/photos/30541177/pexels-photo-30541177.jpeg?auto=compress&cs=tinysrgb&q=85",
+  },
+  {
+    id: "cuttack",
+    name: "Silver Filigree from Cuttack",
+    location: "(Odisa)",
+    description: "An intricate tradition of fine silver work, celebrated for delicate forms and distinctive Odia artistry.",
+    image: "https://images.pexels.com/photos/30541171/pexels-photo-30541171.jpeg?auto=compress&cs=tinysrgb&q=85",
   },
 ];
 

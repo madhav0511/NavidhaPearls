@@ -10,7 +10,7 @@
 ## Data model
 - `Product`: id, name, category, material, price, description, details, image, alt, tag.
 - `CartItem`: product plus quantity, held in Home page state for the demo session.
-- Craft stories are static local content for Thewa, Hupari Silver, and Gulabi Meenakari.
+- Craft stories are static local content for Thewa colored-glass gold and silver jewelry, Hupari silver jewelry, Gulabi Meenakari, Karimnagar silver filigree, and Cuttack silver filigree.
 
 ## Key flows
 1. Hero CTA scrolls to the collection.
@@ -18,6 +18,7 @@
 3. Product image/title opens the detail modal; Add to bag updates the local cart and shows a Sonner toast.
 4. Bag button opens the cart drawer; quantity controls and remove actions update the subtotal.
 5. Preview checkout shows a browser alert because payments are intentionally not integrated.
+6. A centered fixed launch popup opens on landing with “We will be Live Soon”; the visitor can close it or use its preview CTA, and it stays fixed while scrolling until dismissed.
 
 ## Auth and integrations
 - No authentication, accounts, or gated areas.
