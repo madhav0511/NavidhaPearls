@@ -1,0 +1,32 @@
+{
+  "passed": 3,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [
+    "No backend API-bearing criteria in this matrix; the logo is now sourced directly from the exact supplied PNG asset (https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/1pcibk65_image.png) via the shared NavidhaLogo component, so no backend test file was needed."
+  ],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "Exact supplied logo design is preserved in the header / footer; Logo is visibly larger with enhanced edge rendering",
+      "name": "header-footer-logo-desktop",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Updated check (previous version asserted the old navidha-logo-white.svg and failed against the new PNG - re-authored to match new spec). Header [data-testid=navidha-logo-image] src === exact URL .../artifacts/1pcibk65_image.png, boundingBox ~72x72, naturalWidth>0 and complete=true. Footer [data-testid=navidha-brand-mark] badge boundingBox ~112x112 with background-color rgb(20,32,46); inner logo img src === same exact URL, boundingBox ~80x80, loaded successfully. Contrast class (contrast-125) present in component markup."
+    },
+    {
+      "criterion": "Responsive logo layout remains usable",
+      "name": "logo-mobile-layout",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "At 390x844: header logo boundingBox 72x72 fully within viewport bounds (x>=0, x+width<=390, y>=0), no clipping/overlap with nav/cart controls. Footer badge boundingBox width==height (circle preserved, ~112x112) and logo horizontally centered within badge (center delta <=2px)."
+    },
+    {
+      "criterion": "Logo asset and page render without errors",
+      "name": "logo-assets-no-errors",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "No requestfailed events for navidha-logo image assets during load and navigation; footer-craft-link navigation click succeeded with navbar-home-link still visible afterward, confirming header nav intact and no console/page errors surfaced."
+    }
+  ]
+}

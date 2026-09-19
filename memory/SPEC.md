@@ -2,7 +2,7 @@
 
 ## What it does
 - Premium editorial storefront for Navidha Pearls and Jewelry.
-- Uses the latest supplied white Navidha logo throughout; the header places it directly on navy, while the light footer centers it inside a round navy mark matching the navigation banner.
+- Uses the exact supplied white Navidha logo artwork without design changes; contrast-enhanced rendering displays it at 72px in the header and at 80px inside a 112px round navy footer badge.
 - Browse a local demo catalog of pendants, necklaces, earrings, rings, and bracelets.
 - Filter by category and material, search by name, and sort by price.
 - Open product details, add pieces to a local shopping bag, change quantities, remove items, and review the subtotal in a slide-over bag.
