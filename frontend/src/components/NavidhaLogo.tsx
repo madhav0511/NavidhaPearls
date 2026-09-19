@@ -7,13 +7,13 @@ interface NavidhaLogoProps {
 export default function NavidhaLogo({ compact = false }: NavidhaLogoProps) {
   return (
     <div
-      className={compact ? "inline-flex items-center bg-[#14202e] px-3 py-1.5" : "flex items-center"}
+      className={compact ? "grid h-24 w-24 place-items-center rounded-full bg-[#14202e] shadow-[0_12px_30px_rgba(20,32,46,0.18)]" : "flex items-center"}
       data-testid="navidha-brand-mark"
     >
       <img
         src={logoUrl}
         alt="Navidha Pearls and Jewelry logo"
-        className={compact ? "h-14 w-24 object-contain" : "h-16 w-24 object-contain drop-shadow-[0_1px_6px_rgba(200,164,93,0.18)]"}
+        className={compact ? "h-16 w-16 object-contain" : "h-16 w-16 object-contain drop-shadow-[0_1px_6px_rgba(255,255,255,0.12)]"}
         data-testid="navidha-logo-image"
       />
     </div>
