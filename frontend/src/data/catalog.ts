@@ -26,7 +26,7 @@ const imageUrl = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=84`;
 
 export const logoUrl =
-  "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/7m3vb55l_image.png";
+  "https://customer-assets-jai6qajn.emergentagent.net/job_design-preview-395/artifacts/axlodr33_image.png";
 
 export const heroImage = imageUrl("photo-1613966561243-c6959a886009");
 
