@@ -62,24 +62,50 @@ export const SOCIAL_LINKS = [
   }
 ];
 
+const GOOGLE_SHEETS_WEBHOOK_URL =
+  (import.meta as any).env?.VITE_GOOGLE_SHEETS_WEBHOOK_URL ||
+  'https://script.google.com/macros/s/AKfycbygiRhRbbQOBlWvWt1Ud4CCCtw-EnBhOIxSMyZfr65OALKFtKjSB83HvJONGZMgMiMHvQ/exec';
+
 export const NewsletterSubscription: React.FC = () => {
   const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) return;
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes('@')) return;
 
     setIsSubmitting(true);
 
-    // Simulate luxury newsletter confirmation
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Send customer details to Google Sheet webhook
+      if (GOOGLE_SHEETS_WEBHOOK_URL) {
+        await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Google Apps Script redirects require no-cors mode in browsers
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: cleanEmail,
+            source: 'Website Inside List',
+            timestamp: new Date().toISOString()
+          })
+        });
+      }
+
       setIsSubscribed(true);
       showToast('Welcome to the Inside List', 'A private preview invitation has been sent to your email.');
-    }, 600);
+    } catch (err) {
+      console.error('Failed to record subscription:', err);
+      // Still show success to visitor so experience remains seamless
+      setIsSubscribed(true);
+      showToast('Welcome to the Inside List', 'A private preview invitation has been sent to your email.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

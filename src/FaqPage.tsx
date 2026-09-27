@@ -16,8 +16,10 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { FaqSection } from './components/FaqSection';
+import { useScrollToTopOnMount } from './hooks/useScrollToTop';
 
 export const FaqPage: React.FC = () => {
+  useScrollToTopOnMount();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSizeTab, setActiveSizeTab] = useState<'necklaces' | 'rings' | 'bracelets'>('necklaces');
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Search,
   Menu,
@@ -32,9 +32,13 @@ import { Footer } from './components/Footer';
 import { FaqPage } from './FaqPage';
 import { ShippingReturnsPage } from './ShippingReturnsPage';
 import { ToastProvider, useToast } from './components/Toast';
+import { useScrollToTopOnMount } from './hooks/useScrollToTop';
 
 function Storefront() {
   const { showToast } = useToast();
+
+  // Guarantee viewport strictly anchors to Hero section (top 0, 0) on load/reload/navigation
+  useScrollToTopOnMount();
 
   // State
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -45,7 +49,7 @@ function Storefront() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [showLaunchPopup, setShowLaunchPopup] = useState<boolean>(true);
+  const [showLaunchPopup, setShowLaunchPopup] = useState<boolean>(false);
   const [isCampaignOpen, setIsCampaignOpen] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -105,7 +109,7 @@ function Storefront() {
   const scrollToCollection = () => {
     document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
     setTimeout(() => {
-      searchInputRef.current?.focus();
+      searchInputRef.current?.focus({ preventScroll: true });
     }, 400);
   };
 
@@ -115,16 +119,29 @@ function Storefront() {
 
   return (
     <div className="min-h-screen bg-[#fbf9f5] text-[#14202e]" data-testid="navidha-storefront">
-      {/* Launch announcement popup on initial visit */}
+      {/* Launch announcement popup (accessible anytime via announcement bar) */}
       <LaunchPopup
         isOpen={showLaunchPopup}
         onClose={() => setShowLaunchPopup(false)}
-        onExplore={scrollToCollection}
+        onExplore={() => {
+          setShowLaunchPopup(false);
+          window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        }}
       />
 
       {/* Top Announcement Bar */}
-      <div className="announcement-bar" data-testid="announcement-bar">
-        Complimentary delivery across India <span>·</span> The Navidha collection launches soon
+      <div
+        className="announcement-bar flex items-center justify-center gap-2 cursor-pointer transition-colors hover:brightness-105"
+        data-testid="announcement-bar"
+        onClick={() => setShowLaunchPopup(true)}
+        role="button"
+        tabIndex={0}
+        aria-label="View launch details"
+      >
+        <span>Complimentary delivery across India</span>
+        <span>·</span>
+        <span>The Navidha collection launches soon</span>
+        <span className="underline ml-1 text-[8.5px] tracking-widest opacity-80 hover:opacity-100 font-semibold">Preview Info</span>
       </div>
 
       {/* Sticky Header / Navbar */}
@@ -133,7 +150,18 @@ function Storefront() {
         data-testid="navbar"
       >
         <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-16">
-          <a href="#top" aria-label="Navidha home" data-testid="navbar-home-link">
+          <a
+            href="#top"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              if (window.location.hash) {
+                window.history.replaceState(null, '', window.location.pathname);
+              }
+            }}
+            aria-label="Navidha home"
+            data-testid="navbar-home-link"
+          >
             <BrandMark />
           </a>
 
@@ -143,13 +171,37 @@ function Storefront() {
             aria-label="Main navigation"
             data-testid="desktop-navigation"
           >
-            <a href="#collection" className="nav-link" data-testid="navbar-collection-link">
+            <a
+              href="#collection"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="nav-link"
+              data-testid="navbar-collection-link"
+            >
               The collection
             </a>
-            <a href="#craft" className="nav-link" data-testid="navbar-craft-link">
+            <a
+              href="#craft"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('craft')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="nav-link"
+              data-testid="navbar-craft-link"
+            >
               Craft heritage
             </a>
-            <a href="#philosophy" className="nav-link" data-testid="navbar-philosophy-link">
+            <a
+              href="#philosophy"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('philosophy')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="nav-link"
+              data-testid="navbar-philosophy-link"
+            >
               Our philosophy
             </a>
             <button
@@ -212,7 +264,11 @@ function Storefront() {
             <div className="flex flex-col items-start gap-4">
               <a
                 href="#collection"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="nav-link"
                 data-testid="mobile-collection-link"
               >
@@ -220,7 +276,11 @@ function Storefront() {
               </a>
               <a
                 href="#craft"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('craft')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="nav-link"
                 data-testid="mobile-craft-link"
               >
@@ -228,7 +288,11 @@ function Storefront() {
               </a>
               <a
                 href="#philosophy"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('philosophy')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="nav-link"
                 data-testid="mobile-philosophy-link"
               >
@@ -271,6 +335,25 @@ function Storefront() {
             >
               Where India's timeless craftsmanship meets contemporary form. A considered edit of silver, pearls, gold and the hands that make them.
             </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={scrollToCollection}
+                className="inline-flex h-11 items-center justify-center gap-2.5 bg-[#c8a45d] px-7 text-[10px] uppercase tracking-[0.2em] text-[#14202e] font-semibold transition-colors hover:bg-[#d8b56f] cursor-pointer"
+                data-testid="hero-explore-button"
+              >
+                Explore The Collection
+              </button>
+              <button
+                type="button"
+                onClick={scrollToCraft}
+                className="inline-flex h-11 items-center justify-center gap-2.5 border border-white/25 px-6 text-[10px] uppercase tracking-[0.2em] text-[#f8f1e4] transition-colors hover:border-[#c8a45d] hover:text-[#c8a45d] cursor-pointer"
+                data-testid="hero-craft-button"
+              >
+                Our Heritage Craft
+              </button>
+            </div>
           </div>
 
           {/* Right Hero Image Column */}
@@ -281,12 +364,14 @@ function Storefront() {
               aria-hidden="true"
               className="hero-image-backdrop"
               data-testid="hero-image-backdrop"
+              loading="eager"
             />
             <img
               src={HERO_PORTRAIT}
               alt="Indian woman wearing layered silver and pearl Navidha jewelry"
               className="hero-image"
               data-testid="hero-image"
+              loading="eager"
             />
           </div>
         </section>
@@ -336,7 +421,7 @@ function Storefront() {
               </h2>
             </div>
             <p className="section-intro" data-testid="craft-intro">
-              From colored glass gold and silver jewelry to delicate silver filigree, we honour the traditions that make Indian jewelry unmistakably alive.
+              From the fused gold and glass art of Pratapgarh to the spun silver lace of Karimnagar and Cuttack, we honor the living heritage of Indian craftsmanship. Every piece celebrates centuries of regional artistry—vibrant, soul-stirring, and unmistakably alive.
             </p>
           </div>
 
@@ -517,15 +602,15 @@ function Storefront() {
             <div data-testid="material-point-silver">
               <ShieldCheck size={20} className="text-[#c8a45d] shrink-0 mt-0.5" />
               <div>
-                <strong>925 silver</strong>
+                <strong>925 Sterling Silver</strong>
                 <span>Tarnish & firescale resistant</span>
               </div>
             </div>
             <div data-testid="material-point-craft">
               <Sparkles size={20} className="text-[#c8a45d] shrink-0 mt-0.5" />
               <div>
-                <strong>Hand finished</strong>
-                <span>Made by a human hand</span>
+                <strong>Rooted in Heritage</strong>
+                <span>Crafted by a Human hand</span>
               </div>
             </div>
             <div data-testid="material-point-pearl">
@@ -583,6 +668,10 @@ function Storefront() {
               </button>
               <a
                 href="#collection"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-[#14202e] transition-colors hover:text-[#9a7a3e]"
                 data-testid="philosophy-collection-link"
               >

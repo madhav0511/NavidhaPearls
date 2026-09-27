@@ -15,7 +15,19 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
       <div className="mx-auto max-w-[1440px]">
         {/* Brand & Introduction Bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-12 border-b border-[#14202e]/10">
-          <div className="flex items-center gap-4">
+          <a
+            href="#top"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              if (window.location.hash) {
+                window.history.replaceState(null, '', window.location.pathname);
+              }
+            }}
+            className="flex items-center gap-4 cursor-pointer hover:opacity-85 transition-opacity"
+            aria-label="Navidha Home"
+            data-testid="footer-brand-link"
+          >
             <BrandMark compact />
             <div>
               <span className="font-serif text-2xl tracking-[0.2em] uppercase text-[#14202e] font-light block">
@@ -25,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
                 Pearls and Jewelry
               </span>
             </div>
-          </div>
+          </a>
         </div>
 
         {/* 4-Column Navigation Grid */}
@@ -38,8 +50,12 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
             <ul className="space-y-2.5 text-xs text-[#667383]">
               <li>
                 <a
-                  href="/#collection"
-                  onClick={() => onCategorySelect && onCategorySelect('All')}
+                  href="#collection"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect('All');
+                    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-all-collection"
                 >
@@ -48,8 +64,12 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="/#collection"
-                  onClick={() => onCategorySelect && onCategorySelect('Necklaces')}
+                  href="#collection"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect('Necklaces');
+                    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-necklaces"
                 >
@@ -58,8 +78,12 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="/#collection"
-                  onClick={() => onCategorySelect && onCategorySelect('Earrings')}
+                  href="#collection"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect('Earrings');
+                    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-earrings"
                 >
@@ -68,8 +92,12 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="/#collection"
-                  onClick={() => onCategorySelect && onCategorySelect('Rings')}
+                  href="#collection"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect('Rings');
+                    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-rings"
                 >
@@ -78,21 +106,16 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="/#collection"
-                  onClick={() => onCategorySelect && onCategorySelect('Bracelets')}
+                  href="#collection"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onCategorySelect) onCategorySelect('Bracelets');
+                    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-bracelets"
                 >
                   <span>Cuffs & Bracelets</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/#collection"
-                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1 text-[#9a7a3e] font-medium pt-1"
-                >
-                  <span>Moonlit Pearl Signature Edit</span>
-                  <ArrowUpRight size={12} />
                 </a>
               </li>
             </ul>
@@ -105,58 +128,29 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
             </h3>
             <ul className="space-y-2.5 text-xs text-[#667383]">
               <li>
-                <a
-                  href="/#craft"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-thewa"
-                >
-                  Thewa 24K Gold Filigree
-                </a>
+                <span className="block text-[#667383]">
+                  Thewa Jewelry, Pratapgarh (Rajasthan)
+                </span>
               </li>
               <li>
-                <a
-                  href="/#craft"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-meenakari"
-                >
-                  Gulabi Meenakari Enameling
-                </a>
+                <span className="block text-[#667383]">
+                  Gulabi Meenakari, Varanasi (Uttar Pradesh)
+                </span>
               </li>
               <li>
-                <a
-                  href="/#craft"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-pearl-grading"
-                >
-                  AAA Freshwater Pearl Grading
-                </a>
+                <span className="block text-[#667383]">
+                  Silver Filigree, Karimnagar (Telangana)
+                </span>
               </li>
               <li>
-                <a
-                  href="/faq.html#pearl-sourcing"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-hallmark"
-                >
-                  BIS 925 Hallmarking & Certification
-                </a>
+                <span className="block text-[#667383]">
+                  Silver Filigree, Cuttack (Odisha)
+                </span>
               </li>
               <li>
-                <a
-                  href="/#craft"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-artisan-guilds"
-                >
-                  Artisan Guilds & Fair Wages
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/faq.html#thewa-heritage"
-                  className="hover:text-[#9a7a3e] transition-colors"
-                  data-testid="footer-link-design-process"
-                >
-                  Atelier Design Philosophy
-                </a>
+                <span className="block text-[#667383]">
+                  Hupari Silver, Kohlapur (Maharastra)
+                </span>
               </li>
             </ul>
           </div>
@@ -214,7 +208,14 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
             <ul className="space-y-2.5 text-xs text-[#667383]">
               <li>
                 <a
-                  href="/#philosophy"
+                  href="#philosophy"
+                  onClick={(e) => {
+                    const el = document.getElementById('philosophy');
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors"
                   data-testid="footer-link-our-story"
                 >
@@ -223,7 +224,14 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="/#philosophy"
+                  href="#philosophy"
+                  onClick={(e) => {
+                    const el = document.getElementById('philosophy');
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="hover:text-[#9a7a3e] transition-colors"
                   data-testid="footer-link-philosophy-values"
                 >
@@ -264,11 +272,6 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li>
                 <span className="block text-[11px] text-[#667383]/80 pt-2">
                   Atelier: G20, Village Pointe, Road No.1, Alkapoor Township, Manikonda, Hyderabad, Telangana 500089
-                </span>
-              </li>
-              <li>
-                <span className="block text-[11px] text-[#667383]/80">
-                  Concierge Desk: Mon – Sat, 10:00 AM – 7:00 PM IST
                 </span>
               </li>
             </ul>

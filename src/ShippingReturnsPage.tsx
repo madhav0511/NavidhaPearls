@@ -18,8 +18,10 @@ import {
   ChevronRight,
   ExternalLink
 } from 'lucide-react';
+import { useScrollToTopOnMount } from './hooks/useScrollToTop';
 
 export const ShippingReturnsPage: React.FC = () => {
+  useScrollToTopOnMount();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'shipping' | 'tracking' | 'returns' | 'contact'>('shipping');
 

@@ -21,21 +21,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   const handleNextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
   const handleDotClick = (e: React.MouseEvent, idx: number) => {
     e.stopPropagation();
+    e.preventDefault();
     setCurrentImageIndex(idx);
   };
 
   const toggleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setIsWishlisted(!isWishlisted);
   };
 
@@ -64,11 +68,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Carousel arrows */}
         {images.length > 1 && (
-          <>
+          <div onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               onClick={handlePrevImage}
-              className="product-card-arrow product-card-arrow-left"
+              onMouseDown={(e) => e.stopPropagation()}
+              className="product-card-arrow product-card-arrow-left cursor-pointer"
               aria-label={`Previous ${product.name} image`}
               data-testid={`product-image-previous-${product.id}`}
             >
@@ -77,7 +82,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <button
               type="button"
               onClick={handleNextImage}
-              className="product-card-arrow product-card-arrow-right"
+              onMouseDown={(e) => e.stopPropagation()}
+              className="product-card-arrow product-card-arrow-right cursor-pointer"
               aria-label={`Next ${product.name} image`}
               data-testid={`product-image-next-${product.id}`}
             >
@@ -85,24 +91,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </button>
 
             {/* Slide dots */}
-            <div className="product-card-dots" data-testid={`product-image-dots-${product.id}`}>
+            <div className="product-card-dots" data-testid={`product-image-dots-${product.id}`} onClick={(e) => e.stopPropagation()}>
               {images.map((_, idx) => (
                 <button
                   key={`${product.id}-image-${idx}`}
                   type="button"
                   onClick={(e) => handleDotClick(e, idx)}
-                  className={`product-card-dot ${idx === currentImageIndex ? 'product-card-dot-active' : ''}`}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className={`product-card-dot ${idx === currentImageIndex ? 'product-card-dot-active' : ''} cursor-pointer`}
                   aria-label={`Show ${product.name} image ${idx + 1}`}
                   aria-current={idx === currentImageIndex}
                   data-testid={`product-image-dot-${product.id}-${idx + 1}`}
                 />
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Tag Badge */}
-        <span className="absolute left-4 top-4 rounded-none bg-[#fbf9f5]/90 px-3 py-1 font-sans text-[9px] uppercase tracking-[0.18em] text-[#14202e] shadow-xs">
+        <span className="absolute left-4 top-4 rounded-none bg-[#fbf9f5]/90 px-3 py-1 font-sans text-[9px] uppercase tracking-[0.18em] text-[#14202e] shadow-xs pointer-events-none">
           {product.tag}
         </span>
 
@@ -110,6 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <button
           type="button"
           onClick={toggleWishlist}
+          onMouseDown={(e) => e.stopPropagation()}
           className={`absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/70 bg-[#fbf9f5]/85 backdrop-blur-xs transition-all duration-300 hover:scale-110 cursor-pointer ${
             isWishlisted ? 'text-[#c8a45d]' : 'text-[#14202e]'
           }`}

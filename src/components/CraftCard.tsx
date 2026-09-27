@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { CraftStory } from '../data';
 
@@ -6,12 +6,14 @@ interface CraftCardProps {
   story: CraftStory;
   index: number;
   featured?: boolean;
+  onSelect?: (story: CraftStory) => void;
 }
 
 export const CraftCard: React.FC<CraftCardProps> = ({
   story,
   index,
-  featured = false
+  featured = false,
+  onSelect
 }) => {
   const images = story.images && story.images.length > 0 ? story.images : [story.image];
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -19,26 +21,42 @@ export const CraftCard: React.FC<CraftCardProps> = ({
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setCurrentIdx((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const handleNext = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setCurrentIdx((prev) => (prev + 1) % images.length);
   };
 
-  useEffect(() => {
-    if (!hasMultiple) return;
-    const interval = window.setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % images.length);
-    }, 4500);
-    return () => window.clearInterval(interval);
-  }, [hasMultiple, images.length]);
+  const handleDotClick = (e: React.MouseEvent, idx: number) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentIdx(idx);
+  };
+
+  const handleCardClick = () => {
+    if (onSelect) {
+      onSelect(story);
+    }
+  };
 
   return (
     <article
-      className={`craft-card ${featured ? 'craft-card-featured' : ''}`}
+      className={`craft-card group cursor-pointer ${featured ? 'craft-card-featured' : ''}`}
+      onClick={handleCardClick}
       data-testid={`craft-card-${story.id}`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+      aria-label={`View craft story for ${story.name}`}
     >
       <img
         key={`${story.id}-${currentIdx}`}
@@ -56,10 +74,8 @@ export const CraftCard: React.FC<CraftCardProps> = ({
               <button
                 key={`${story.id}-dot-${idx}`}
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentIdx(idx);
-                }}
+                onClick={(e) => handleDotClick(e, idx)}
+                onMouseDown={(e) => e.stopPropagation()}
                 className={`craft-card-dot ${idx === currentIdx ? 'craft-card-dot-active' : ''}`}
                 aria-label={`Show ${story.name} image ${idx + 1}`}
                 aria-current={idx === currentIdx}
@@ -68,11 +84,12 @@ export const CraftCard: React.FC<CraftCardProps> = ({
             ))}
           </div>
 
-          <div className="craft-card-arrows">
+          <div className="craft-card-arrows" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               onClick={handlePrev}
-              className="craft-card-arrow"
+              onMouseDown={(e) => e.stopPropagation()}
+              className="craft-card-arrow craft-card-arrow-left"
               aria-label={`Previous ${story.name} image`}
               data-testid={`craft-slider-previous-${story.id}`}
             >
@@ -81,7 +98,8 @@ export const CraftCard: React.FC<CraftCardProps> = ({
             <button
               type="button"
               onClick={handleNext}
-              className="craft-card-arrow"
+              onMouseDown={(e) => e.stopPropagation()}
+              className="craft-card-arrow craft-card-arrow-right"
               aria-label={`Next ${story.name} image`}
               data-testid={`craft-slider-next-${story.id}`}
             >
@@ -96,15 +114,21 @@ export const CraftCard: React.FC<CraftCardProps> = ({
           <p className="text-[10px] uppercase tracking-[0.18em] text-[#f1dfb8]" data-testid={`craft-location-${story.id}`}>
             0{index + 1} · {story.location}
           </p>
-          <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-[#f8f1e4] leading-snug" data-testid={`craft-name-${story.id}`}>
+          <h3 className="mt-2 font-serif text-2xl sm:text-3xl text-[#f8f1e4] leading-snug group-hover:text-[#c8a45d] transition-colors" data-testid={`craft-name-${story.id}`}>
             {story.name}
           </h3>
           <p className="mt-2 max-w-sm text-xs sm:text-sm leading-6 text-[#f8f1e4]/80" data-testid={`craft-description-${story.id}`}>
             {story.description}
           </p>
         </div>
-        <ArrowUpRight size={20} className="shrink-0 text-[#c8a45d]" />
+        <div className="flex items-center gap-1.5 text-[#c8a45d] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">
+          <span className="text-[10px] uppercase tracking-widest hidden sm:inline font-sans opacity-0 group-hover:opacity-100 transition-opacity">
+            Read story
+          </span>
+          <ArrowUpRight size={20} className="shrink-0" />
+        </div>
       </div>
     </article>
   );
 };
+
