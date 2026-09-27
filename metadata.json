@@ -1,0 +1,6 @@
+{
+  "name": "Navidha — Jewelry, Reimagined",
+  "description": "Navidha Pearls and Jewelry — contemporary jewelry rooted in India's extraordinary craft traditions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

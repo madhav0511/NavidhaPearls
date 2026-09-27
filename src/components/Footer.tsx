@@ -1,0 +1,294 @@
+import React from 'react';
+import { BrandMark } from './BrandMark';
+import { Mail, Phone, MapPin, Instagram, Sparkles, ArrowUpRight } from 'lucide-react';
+
+interface FooterProps {
+  onCategorySelect?: (category: string) => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
+  return (
+    <footer
+      className="border-t border-[#14202e]/10 bg-[#fbf9f5] pt-16 pb-12 px-5 sm:px-8 lg:px-16"
+      data-testid="site-footer"
+    >
+      <div className="mx-auto max-w-[1440px]">
+        {/* Brand & Introduction Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-12 border-b border-[#14202e]/10">
+          <div className="flex items-center gap-4">
+            <BrandMark compact />
+            <div>
+              <span className="font-serif text-2xl tracking-[0.2em] uppercase text-[#14202e] font-light block">
+                Navidha
+              </span>
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[#9a7a3e]">
+                Pearls and Jewelry
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 4-Column Navigation Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-14 border-b border-[#14202e]/10">
+          {/* Column 1: The Collections */}
+          <div className="space-y-4" data-testid="footer-col-collections">
+            <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
+              The Collections
+            </h3>
+            <ul className="space-y-2.5 text-xs text-[#667383]">
+              <li>
+                <a
+                  href="/#collection"
+                  onClick={() => onCategorySelect && onCategorySelect('All')}
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-all-collection"
+                >
+                  <span>Complete House Catalogue</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#collection"
+                  onClick={() => onCategorySelect && onCategorySelect('Necklaces')}
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-necklaces"
+                >
+                  <span>Necklaces & Collars</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#collection"
+                  onClick={() => onCategorySelect && onCategorySelect('Earrings')}
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-earrings"
+                >
+                  <span>Earrings & Drops</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#collection"
+                  onClick={() => onCategorySelect && onCategorySelect('Rings')}
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-rings"
+                >
+                  <span>Sculptural Rings</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#collection"
+                  onClick={() => onCategorySelect && onCategorySelect('Bracelets')}
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-bracelets"
+                >
+                  <span>Cuffs & Bracelets</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#collection"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1 text-[#9a7a3e] font-medium pt-1"
+                >
+                  <span>Moonlit Pearl Signature Edit</span>
+                  <ArrowUpRight size={12} />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 2: Craft Heritage */}
+          <div className="space-y-4" data-testid="footer-col-craft">
+            <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
+              Craft Heritage
+            </h3>
+            <ul className="space-y-2.5 text-xs text-[#667383]">
+              <li>
+                <a
+                  href="/#craft"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-thewa"
+                >
+                  Thewa 24K Gold Filigree
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#craft"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-meenakari"
+                >
+                  Gulabi Meenakari Enameling
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#craft"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-pearl-grading"
+                >
+                  AAA Freshwater Pearl Grading
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/faq.html#pearl-sourcing"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-hallmark"
+                >
+                  BIS 925 Hallmarking & Certification
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#craft"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-artisan-guilds"
+                >
+                  Artisan Guilds & Fair Wages
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/faq.html#thewa-heritage"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-design-process"
+                >
+                  Atelier Design Philosophy
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Customer Care */}
+          <div className="space-y-4" data-testid="footer-col-customer-care">
+            <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
+              Customer Care
+            </h3>
+            <ul className="space-y-2.5 text-xs text-[#667383]">
+              <li>
+                <a
+                  href="/faq.html"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-faq"
+                >
+                  <span>FAQ</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/shipping-returns.html"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-shipping-returns"
+                >
+                  <span>Shipping & Returns</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/faq.html#pearl-care"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-care-guide"
+                >
+                  Jewelry Care Guide
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/faq.html#size-guide"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-size-guide"
+                >
+                  Sizing & Measurement Guide
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: About Navidha */}
+          <div className="space-y-4" data-testid="footer-col-about">
+            <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
+              About Navidha
+            </h3>
+            <ul className="space-y-2.5 text-xs text-[#667383]">
+              <li>
+                <a
+                  href="/#philosophy"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-our-story"
+                >
+                  Our Story
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#philosophy"
+                  className="hover:text-[#9a7a3e] transition-colors"
+                  data-testid="footer-link-philosophy-values"
+                >
+                  Philosophy & Values
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:Enquiries@navidhapearls.com?subject=Contact%20Navidha"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-contact-us"
+                >
+                  <Mail size={12} className="text-[#9a7a3e]" />
+                  <span>Contact Us</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/919000022840?text=Hello%20Navidha%20Concierge%2C%20I%20would%20like%20assistance."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5 text-[#9a7a3e]"
+                  data-testid="footer-link-whatsapp"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="13"
+                    height="13"
+                    fill="currentColor"
+                    className="shrink-0"
+                    aria-hidden="true"
+                  >
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  <span>WhatsApp Us</span>
+                </a>
+              </li>
+              <li>
+                <span className="block text-[11px] text-[#667383]/80 pt-2">
+                  Atelier: G20, Village Pointe, Road No.1, Alkapoor Township, Manikonda, Hyderabad, Telangana 500089
+                </span>
+              </li>
+              <li>
+                <span className="block text-[11px] text-[#667383]/80">
+                  Concierge Desk: Mon – Sat, 10:00 AM – 7:00 PM IST
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Rights & Badges */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#667383]">
+          <div className="flex items-center gap-2">
+            <Sparkles size={13} className="text-[#9a7a3e]" />
+            <p className="text-[11px] uppercase tracking-[0.16em] text-[#9a7a3e]">
+              Certified 925 Hallmarked Sterling Silver · Ethical Freshwater Cultivation
+            </p>
+          </div>
+
+          <p className="text-[10px] uppercase tracking-[0.14em] text-[#9a7a3e]" data-testid="footer-copyright">
+            © {new Date().getFullYear()} Navidha Pearls & Jewelry. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
