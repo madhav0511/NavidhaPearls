@@ -136,7 +136,7 @@ export const NewsletterSubscription: React.FC = () => {
           className="font-serif text-2xl sm:text-3xl lg:text-[34px] leading-snug sm:leading-relaxed text-[#f8f1e4] font-normal tracking-[-0.01em] max-w-[740px] mx-auto"
           data-testid="newsletter-headline"
         >
-          Unlock early access to the Navidha collection and enjoy a private preview of handcrafted pieces made for your story.
+          Join the World of Navidha
         </h2>
 
         {/* Subscription Form */}

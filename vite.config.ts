@@ -24,6 +24,8 @@ export default defineConfig(() => {
           main: path.resolve(__dirname, 'index.html'),
           faq: path.resolve(__dirname, 'faq.html'),
           shipping: path.resolve(__dirname, 'shipping-returns.html'),
+          privacy: path.resolve(__dirname, 'privacy-policy.html'),
+          consultation: path.resolve(__dirname, 'consultation.html'),
         },
       },
     },

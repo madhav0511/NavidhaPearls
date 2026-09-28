@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Heart, ArrowUpRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, ArrowUpRight, Plus, Eye } from 'lucide-react';
 import { Product, formatINR } from '../data';
 
 interface ProductCardProps {
@@ -127,18 +127,35 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <Heart size={15} strokeWidth={1.6} fill={isWishlisted ? '#c8a45d' : 'none'} />
         </button>
 
-        {/* Hover Quick Add */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onAdd(product);
-          }}
-          className="absolute bottom-4 left-4 right-4 translate-y-3 flex items-center justify-center gap-2 rounded-none border border-[#f8f1e4]/30 bg-[#14202e]/95 py-2.5 font-sans text-[10px] uppercase tracking-[0.18em] text-[#f8f1e4] opacity-0 backdrop-blur-xs transition-all duration-300 hover:bg-[#c8a45d] hover:text-[#14202e] group-hover:translate-y-0 group-hover:opacity-100 cursor-pointer"
-          data-testid={`product-add-${product.id}`}
-        >
-          <Plus size={14} /> Add to bag
-        </button>
+        {/* Hover Action Bar: Quick Look & Quick Add */}
+        <div className="absolute bottom-4 left-4 right-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2 z-10">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onSelect(product);
+            }}
+            className="flex-1 flex items-center justify-center gap-1.5 border border-[#14202e]/15 bg-[#fbf9f5]/95 hover:bg-[#14202e] hover:text-[#f8f1e4] text-[#14202e] py-2.5 font-sans text-[9px] uppercase tracking-[0.16em] backdrop-blur-xs transition-all duration-200 cursor-pointer shadow-xs active:scale-[0.98]"
+            data-testid={`product-quick-look-${product.id}`}
+            aria-label={`Quick look at ${product.name}`}
+          >
+            <Eye size={13} strokeWidth={1.7} /> Quick Look
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onAdd(product);
+            }}
+            className="flex-1 flex items-center justify-center gap-1.5 border border-[#f8f1e4]/30 bg-[#14202e]/95 hover:bg-[#c8a45d] hover:text-[#14202e] text-[#f8f1e4] py-2.5 font-sans text-[9px] uppercase tracking-[0.16em] backdrop-blur-xs transition-all duration-200 cursor-pointer shadow-xs active:scale-[0.98]"
+            data-testid={`product-add-${product.id}`}
+            aria-label={`Add ${product.name} to bag`}
+          >
+            <Plus size={13} /> Add to bag
+          </button>
+        </div>
       </div>
 
       {/* Product Details Header */}

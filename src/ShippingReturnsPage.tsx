@@ -75,7 +75,7 @@ export const ShippingReturnsPage: React.FC = () => {
               Shipping & Returns
             </a>
             <a
-              href="mailto:Enquiries@navidhapearls.com?subject=Fulfillment%20Inquiry"
+              href="mailto:navidha.pearls@gmail.com?subject=Fulfillment%20Inquiry"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#14202e] text-[#f8f1e4] hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors rounded-[2px]"
             >
               <Mail size={13} />
@@ -403,7 +403,7 @@ export const ShippingReturnsPage: React.FC = () => {
                       Notify Concierge
                     </div>
                     <p className="text-xs text-[#b8c0c8] leading-relaxed">
-                      Share your Order ID and reason for return or requested exchange size via WhatsApp (+91 98765 43210) or email (concierge@navidha.com).
+                      Share your Order ID and reason for return or requested exchange size via WhatsApp (+91 98765 43210) or email (navidha.pearls@gmail.com).
                     </p>
                   </div>
 
@@ -474,7 +474,7 @@ export const ShippingReturnsPage: React.FC = () => {
 
                 <div className="flex flex-wrap items-center gap-3 w-full md:w-auto shrink-0">
                   <a
-                    href="mailto:Enquiries@navidhapearls.com?subject=Navidha%20Fulfillment%20Inquiry"
+                    href="mailto:navidha.pearls@gmail.com?subject=Navidha%20Fulfillment%20Inquiry"
                     className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 border border-[#14202e]/20 bg-[#fbf9f5] hover:bg-[#14202e] hover:text-[#f8f1e4] text-xs tracking-wider uppercase text-[#14202e] transition-colors rounded-[2px]"
                     data-testid="fulfillment-email-link"
                   >

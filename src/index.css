@@ -92,11 +92,6 @@
   font-weight: 700;
 }
 
-.announcement-bar span {
-  opacity: 0.55;
-  margin: 0 10px;
-}
-
 .nav-link {
   color: #f8f1e4;
   letter-spacing: 0.18em;
@@ -386,7 +381,7 @@
 
 .craft-card-arrows {
   z-index: 3;
-  gap: 7px;
+  gap: 8px;
   display: flex;
   position: absolute;
   top: 20px;
@@ -395,19 +390,21 @@
 
 .craft-card-arrow {
   color: #f8f1e4;
-  background: rgba(20, 32, 46, 0.7);
-  border: 1px solid rgba(248, 241, 228, 0.35);
+  background: rgba(20, 32, 46, 0.75);
+  border: 1px solid rgba(248, 241, 228, 0.4);
   place-items: center;
   width: 34px;
   height: 34px;
-  transition: background 0.22s, color 0.22s;
+  transition: background 0.22s, color 0.22s, transform 0.2s;
   display: grid;
   backdrop-filter: blur(4px);
+  cursor: pointer;
 }
 
 .craft-card-arrow:hover {
   color: #14202e;
   background: #c8a45d;
+  transform: scale(1.05);
 }
 
 /* Catalog & Toolbar */

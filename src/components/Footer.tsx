@@ -1,12 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrandMark } from './BrandMark';
-import { Mail, Phone, MapPin, Instagram, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Sparkles } from 'lucide-react';
+import { CookiePreferencesModal, CookieConsentState } from './CookiePreferencesModal';
+import { CraftDetailModal } from './CraftDetailModal';
+import { HERITAGE_CRAFTS, CraftStory } from '../data';
 
 interface FooterProps {
   onCategorySelect?: (category: string) => void;
+  onSelectCraft?: (craft: CraftStory) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
+export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft }) => {
+  const [isCookieModalOpen, setIsCookieModalOpen] = useState(false);
+  const [internalActiveCraft, setInternalActiveCraft] = useState<CraftStory | null>(null);
+
+  const handleCraftClick = (craftId: string) => {
+    const found = HERITAGE_CRAFTS.find((c) => c.id === craftId);
+    if (found) {
+      if (onSelectCraft) {
+        onSelectCraft(found);
+      } else {
+        setInternalActiveCraft(found);
+      }
+    }
+  };
+
+  const handleSaveCookiePreferences = (prefs: CookieConsentState) => {
+    try {
+      localStorage.setItem('navidha_cookie_consent', JSON.stringify(prefs));
+    } catch {}
+    setIsCookieModalOpen(false);
+  };
   return (
     <footer
       className="border-t border-[#14202e]/10 bg-[#fbf9f5] pt-16 pb-12 px-5 sm:px-8 lg:px-16"
@@ -45,7 +69,19 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
           {/* Column 1: The Collections */}
           <div className="space-y-4" data-testid="footer-col-collections">
             <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
-              The Collections
+              <a
+                href="#curated"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onCategorySelect) onCategorySelect('All');
+                  const el = document.getElementById('curated') || document.getElementById('collection');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#9a7a3e] hover:underline decoration-1 underline-offset-4 transition-all block text-inherit"
+                title="Explore Curated Collections"
+              >
+                The Collections
+              </a>
             </h3>
             <ul className="space-y-2.5 text-xs text-[#667383]">
               <li>
@@ -124,33 +160,74 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
           {/* Column 2: Craft Heritage */}
           <div className="space-y-4" data-testid="footer-col-craft">
             <h3 className="font-serif text-base text-[#14202e] uppercase tracking-[0.16em] font-normal pb-2 border-b border-[#14202e]/10">
-              Craft Heritage
+              <a
+                href="#heritage"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('heritage') || document.getElementById('craft');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#9a7a3e] hover:underline decoration-1 underline-offset-4 transition-all block text-inherit"
+                title="Explore Craft Heritage"
+              >
+                Craft Heritage
+              </a>
             </h3>
             <ul className="space-y-2.5 text-xs text-[#667383]">
               <li>
-                <span className="block text-[#667383]">
+                <button
+                  type="button"
+                  onClick={() => handleCraftClick('thewa')}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left text-inherit"
+                  data-testid="footer-craft-link-thewa"
+                  aria-label="View Thewa Jewelry, Pratapgarh craft card"
+                >
                   Thewa Jewelry, Pratapgarh (Rajasthan)
-                </span>
+                </button>
               </li>
               <li>
-                <span className="block text-[#667383]">
+                <button
+                  type="button"
+                  onClick={() => handleCraftClick('meenakari')}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left text-inherit"
+                  data-testid="footer-craft-link-meenakari"
+                  aria-label="View Gulabi Meenakari, Varanasi craft card"
+                >
                   Gulabi Meenakari, Varanasi (Uttar Pradesh)
-                </span>
+                </button>
               </li>
               <li>
-                <span className="block text-[#667383]">
+                <button
+                  type="button"
+                  onClick={() => handleCraftClick('karimnagar')}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left text-inherit"
+                  data-testid="footer-craft-link-karimnagar"
+                  aria-label="View Silver Filigree, Karimnagar craft card"
+                >
                   Silver Filigree, Karimnagar (Telangana)
-                </span>
+                </button>
               </li>
               <li>
-                <span className="block text-[#667383]">
+                <button
+                  type="button"
+                  onClick={() => handleCraftClick('cuttack')}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left text-inherit"
+                  data-testid="footer-craft-link-cuttack"
+                  aria-label="View Silver Filigree, Cuttack craft card"
+                >
                   Silver Filigree, Cuttack (Odisha)
-                </span>
+                </button>
               </li>
               <li>
-                <span className="block text-[#667383]">
+                <button
+                  type="button"
+                  onClick={() => handleCraftClick('hupari')}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left text-inherit"
+                  data-testid="footer-craft-link-hupari"
+                  aria-label="View Hupari Silver, Kolhapur craft card"
+                >
                   Hupari Silver, Kohlapur (Maharastra)
-                </span>
+                </button>
               </li>
             </ul>
           </div>
@@ -178,6 +255,25 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
                 >
                   <span>Shipping & Returns</span>
                 </a>
+              </li>
+              <li>
+                <a
+                  href="/privacy-policy.html"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-privacy-policy"
+                >
+                  <span>Privacy Policy & Cookies</span>
+                </a>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setIsCookieModalOpen(true)}
+                  className="hover:text-[#9a7a3e] transition-colors cursor-pointer text-left inline-flex items-center gap-1.5 text-inherit"
+                  data-testid="footer-link-cookie-preferences"
+                >
+                  <span>Cookie Preferences</span>
+                </button>
               </li>
               <li>
                 <a
@@ -240,7 +336,7 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <a
-                  href="mailto:Enquiries@navidhapearls.com?subject=Contact%20Navidha"
+                  href="mailto:navidha.pearls@gmail.com?subject=Contact%20Navidha"
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
                   data-testid="footer-link-contact-us"
                 >
@@ -287,11 +383,49 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
             </p>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.14em] text-[#9a7a3e]" data-testid="footer-copyright">
-            © {new Date().getFullYear()} Navidha Pearls & Jewelry. All rights reserved.
-          </p>
+          <div className="flex flex-wrap items-center gap-4 text-[10px] uppercase tracking-[0.14em] text-[#9a7a3e]">
+            <a
+              href="/privacy-policy.html"
+              className="hover:underline hover:text-[#14202e] transition-colors"
+              data-testid="footer-bottom-privacy-link"
+            >
+              Privacy Policy
+            </a>
+            <span>·</span>
+            <button
+              type="button"
+              onClick={() => setIsCookieModalOpen(true)}
+              className="hover:underline hover:text-[#14202e] transition-colors cursor-pointer"
+              data-testid="footer-bottom-cookie-settings"
+            >
+              Cookie Settings
+            </button>
+            <span>·</span>
+            <p data-testid="footer-copyright">
+              © {new Date().getFullYear()} Navidha Pearls & Jewelry. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Cookie Preferences Modal */}
+      <CookiePreferencesModal
+        isOpen={isCookieModalOpen}
+        onClose={() => setIsCookieModalOpen(false)}
+        onSave={handleSaveCookiePreferences}
+      />
+
+      {/* Craft Detail Modal Fallback */}
+      {internalActiveCraft && (
+        <CraftDetailModal
+          story={internalActiveCraft}
+          onClose={() => setInternalActiveCraft(null)}
+          onExploreCollection={() => {
+            setInternalActiveCraft(null);
+            document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+      )}
     </footer>
   );
 };

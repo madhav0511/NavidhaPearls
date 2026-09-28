@@ -8,10 +8,12 @@ import {
   ArrowUpRight,
   ShieldCheck,
   Gem,
-  Award
+  Award,
+  Globe
 } from 'lucide-react';
 import {
   Product,
+  CraftStory,
   CartItem,
   PRODUCTS,
   HERITAGE_CRAFTS,
@@ -25,12 +27,19 @@ import { LaunchPopup } from './components/LaunchPopup';
 import { ProductCard } from './components/ProductCard';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { CraftCard } from './components/CraftCard';
+import { CraftDetailModal } from './components/CraftDetailModal';
 import { CampaignGalleryModal } from './components/CampaignGalleryModal';
 import { CartDrawer } from './components/CartDrawer';
 import { NewsletterSubscription } from './components/NewsletterSubscription';
 import { Footer } from './components/Footer';
 import { FaqPage } from './FaqPage';
 import { ShippingReturnsPage } from './ShippingReturnsPage';
+import { PrivacyPolicyPage } from './PrivacyPolicyPage';
+import { CookieBanner } from './components/CookieBanner';
+import { ShippingCountryModal, SUPPORTED_COUNTRIES, ShippingCountry } from './components/ShippingCountryModal';
+import { ContactDrawer } from './components/ContactDrawer';
+import { ConsultationPage } from './ConsultationPage';
+import { GlobeGridIcon, ChatBubbleIcon } from './components/TopBarIcons';
 import { ToastProvider, useToast } from './components/Toast';
 import { useScrollToTopOnMount } from './hooks/useScrollToTop';
 
@@ -46,11 +55,36 @@ function Storefront() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortOption, setSortOption] = useState<string>('featured');
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
+  const [activeCraft, setActiveCraft] = useState<CraftStory | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showLaunchPopup, setShowLaunchPopup] = useState<boolean>(false);
   const [isCampaignOpen, setIsCampaignOpen] = useState<boolean>(false);
+  const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
+  const [isContactDrawerOpen, setIsContactDrawerOpen] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState<ShippingCountry>(() => {
+    try {
+      const savedCode = localStorage.getItem('navidha_shipping_country');
+      if (savedCode) {
+        const found = SUPPORTED_COUNTRIES.find((c) => c.code === savedCode);
+        if (found) return found;
+      }
+    } catch {}
+    return SUPPORTED_COUNTRIES[0];
+  });
+
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('navidha_country_prompt_seen');
+      if (!seen) {
+        const timer = setTimeout(() => {
+          setIsCountryModalOpen(true);
+        }, 1200);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, []);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -107,15 +141,20 @@ function Storefront() {
   };
 
   const scrollToCollection = () => {
-    document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('curated') || document.getElementById('collection');
+    el?.scrollIntoView({ behavior: 'smooth' });
     setTimeout(() => {
       searchInputRef.current?.focus({ preventScroll: true });
     }, 400);
   };
 
-  const scrollToCraft = () => {
-    document.getElementById('craft')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToHeritage = () => {
+    const el = document.getElementById('heritage') || document.getElementById('craft');
+    el?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const scrollToCurated = scrollToCollection;
+  const scrollToCraft = scrollToHeritage;
 
   return (
     <div className="min-h-screen bg-[#fbf9f5] text-[#14202e]" data-testid="navidha-storefront">
@@ -131,17 +170,45 @@ function Storefront() {
 
       {/* Top Announcement Bar */}
       <div
-        className="announcement-bar flex items-center justify-center gap-2 cursor-pointer transition-colors hover:brightness-105"
+        className="announcement-bar flex items-center justify-between px-3 sm:px-6 lg:px-8 text-[9px] sm:text-[9.5px] tracking-[0.12em] sm:tracking-[0.14em] uppercase text-[#14202e]"
         data-testid="announcement-bar"
-        onClick={() => setShowLaunchPopup(true)}
-        role="button"
-        tabIndex={0}
-        aria-label="View launch details"
       >
-        <span>Complimentary delivery across India</span>
-        <span>·</span>
-        <span>The Navidha collection launches soon</span>
-        <span className="underline ml-1 text-[8.5px] tracking-widest opacity-80 hover:opacity-100 font-semibold">Preview Info</span>
+        {/* Left: Globe Logo and Country Name as "INDIA" (static, no popup window link) */}
+        <div className="flex items-center gap-1.5 shrink-0 select-none text-[#14202e]" data-testid="announcement-country-india">
+          <GlobeGridIcon size={14} color="#14202e" className="shrink-0" />
+          <span className="text-[#14202e] font-bold tracking-[0.18em]">INDIA</span>
+        </div>
+
+        {/* Middle: "Complementary Insured Shipping Across India" (no popup link, solid dark navy blue) */}
+        <div
+          className="text-center font-bold tracking-[0.12em] sm:tracking-[0.16em] px-2 truncate select-none text-[#14202e]"
+          data-testid="announcement-middle-shipping"
+        >
+          <span className="text-[#14202e] font-bold">Complementary Insured Shipping Across India</span>
+        </div>
+
+        {/* Right Side: "Custom Design Consultation" & "Contact Us" */}
+        <div className="flex items-center gap-2.5 sm:gap-4 shrink-0 text-[#14202e]" data-testid="announcement-right-links">
+          <a
+            href="/consultation.html#/services"
+            className="hidden md:inline-block text-[#14202e] hover:opacity-75 transition-opacity cursor-pointer tracking-[0.12em] sm:tracking-[0.14em] font-bold"
+            data-testid="announcement-consultation-link"
+            title="Book Custom Design Consultation"
+          >
+            Custom Design Consultation
+          </a>
+          <span className="hidden md:inline text-[#14202e]/30 text-[10px]">|</span>
+          <button
+            type="button"
+            onClick={() => setIsContactDrawerOpen(true)}
+            className="text-[#14202e] hover:opacity-75 transition-opacity cursor-pointer font-bold tracking-[0.14em] sm:tracking-[0.16em] inline-flex items-center gap-1.5 uppercase"
+            data-testid="announcement-contact-btn"
+            aria-label="Open Contact Us sidebar"
+          >
+            <ChatBubbleIcon size={12} color="#14202e" className="shrink-0" />
+            <span className="text-[#14202e] font-bold uppercase">CONTACT US</span>
+          </button>
+        </div>
       </div>
 
       {/* Sticky Header / Navbar */}
@@ -309,6 +376,27 @@ function Storefront() {
               >
                 Campaign
               </button>
+              <div className="w-full pt-3 mt-2 border-t border-white/10 flex flex-col gap-3">
+                <a
+                  href="/consultation.html"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="nav-link text-[#c8a45d] text-left"
+                  data-testid="mobile-consultation-link"
+                >
+                  Custom Design Consultation
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsContactDrawerOpen(true);
+                  }}
+                  className="nav-link text-left uppercase text-xs tracking-wider"
+                  data-testid="mobile-contact-btn"
+                >
+                  Contact Us
+                </button>
+              </div>
             </div>
           </nav>
         )}
@@ -409,15 +497,47 @@ function Storefront() {
         </section>
 
         {/* Heritage Craft Section */}
-        <section id="craft" className="section-shell bg-[#f0ebe3]" data-testid="heritage-craft-section">
+        <section id="craft" className="section-shell bg-[#f0ebe3] scroll-mt-20 relative" data-testid="heritage-craft-section">
+          <div id="heritage" className="absolute -top-24 pointer-events-none" />
           <div className="section-heading">
             <div>
               <p className="eyebrow text-[#9a7a3e]" data-testid="craft-eyebrow">
-                Heritage, curated
+                <a
+                  href="#heritage"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToHeritage();
+                  }}
+                  className="hover:underline hover:opacity-80 transition-all cursor-pointer underline-offset-4"
+                  data-testid="link-heritage-header"
+                >
+                  Heritage
+                </a>
+                <span className="text-[#9a7a3e]/60">, </span>
+                <a
+                  href="#curated"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToCurated();
+                  }}
+                  className="hover:underline hover:opacity-80 transition-all cursor-pointer underline-offset-4"
+                  data-testid="link-curated-header"
+                >
+                  curated
+                </a>
               </p>
               <h2 className="section-title" data-testid="craft-title">
-                The hands behind<br />
-                <em>the beauty.</em>
+                <a
+                  href="#heritage"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToHeritage();
+                  }}
+                  className="group inline-block transition-opacity hover:opacity-85 cursor-pointer text-inherit"
+                >
+                  The hands behind<br />
+                  <em className="group-hover:underline decoration-1 underline-offset-4">the beauty.</em>
+                </a>
               </h2>
             </div>
             <p className="section-intro" data-testid="craft-intro">
@@ -432,20 +552,53 @@ function Storefront() {
                 story={craft}
                 index={idx}
                 featured={idx === 0}
+                onSelect={setActiveCraft}
               />
             ))}
           </div>
         </section>
 
         {/* Product Catalog Section */}
-        <section id="collection" className="section-shell" data-testid="product-catalog-section">
+        <section id="collection" className="section-shell scroll-mt-20 relative" data-testid="product-catalog-section">
+          <div id="curated" className="absolute -top-24 pointer-events-none" />
           <div className="section-heading">
             <div>
               <p className="eyebrow text-[#9a7a3e]" data-testid="collection-eyebrow">
-                The house collection
+                <a
+                  href="#curated"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToCurated();
+                  }}
+                  className="hover:underline hover:opacity-80 transition-all cursor-pointer underline-offset-4"
+                  data-testid="link-collection-curated-header"
+                >
+                  Curated collection
+                </a>
+                <span className="text-[#9a7a3e]/60"> · </span>
+                <a
+                  href="#heritage"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToHeritage();
+                  }}
+                  className="hover:underline hover:opacity-80 transition-all cursor-pointer underline-offset-4"
+                  data-testid="link-collection-heritage-header"
+                >
+                  Heritage craft
+                </a>
               </p>
               <h2 className="section-title" data-testid="collection-title">
-                Navidha <em>Silver</em>
+                <a
+                  href="#curated"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToCurated();
+                  }}
+                  className="group inline-block transition-opacity hover:opacity-85 cursor-pointer text-inherit"
+                >
+                  Navidha <em className="group-hover:underline decoration-1 underline-offset-4">Silver</em>
+                </a>
               </h2>
             </div>
             <p className="section-intro" data-testid="collection-intro">
@@ -651,8 +804,29 @@ function Storefront() {
               Our philosophy
             </p>
             <h2 className="section-title" data-testid="philosophy-title">
-              Crafted in India.<br />
-              <em>Curated by Navidha.</em>
+              <a
+                href="#heritage"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToHeritage();
+                }}
+                className="hover:opacity-80 transition-opacity cursor-pointer hover:underline decoration-1 underline-offset-4 inline-block text-inherit"
+                title="Explore Heritage Crafts"
+              >
+                Crafted in India.
+              </a>
+              <br />
+              <a
+                href="#curated"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToCurated();
+                }}
+                className="hover:opacity-80 transition-opacity cursor-pointer inline-block text-inherit"
+                title="Explore Curated Collections"
+              >
+                <em className="hover:underline decoration-1 underline-offset-4">Curated by Navidha.</em>
+              </a>
             </h2>
             <p className="mt-7 max-w-lg text-base leading-8 text-[#667383]" data-testid="philosophy-copy">
               We believe jewelry should feel like a discovery — a small, luminous reminder of where you have been and who you are becoming. Every Navidha edit begins with an Indian craft story and ends with a piece that belongs entirely to you.
@@ -686,7 +860,10 @@ function Storefront() {
       </main>
 
       {/* Reorganized 4-Column Footer */}
-      <Footer onCategorySelect={(cat) => setSelectedCategory(cat)} />
+      <Footer
+        onCategorySelect={(cat) => setSelectedCategory(cat)}
+        onSelectCraft={(craft) => setActiveCraft(craft)}
+      />
 
       {/* Cart Drawer */}
       <CartDrawer
@@ -713,12 +890,48 @@ function Storefront() {
           setIsCartOpen(true);
         }}
       />
+
+      {/* Craft Detail Modal */}
+      <CraftDetailModal
+        story={activeCraft}
+        onClose={() => setActiveCraft(null)}
+        onExploreCollection={scrollToCurated}
+      />
+
+      {/* Shipping Country Prompt Modal */}
+      <ShippingCountryModal
+        isOpen={isCountryModalOpen}
+        onClose={() => setIsCountryModalOpen(false)}
+        onCountryChange={(c) => setSelectedCountry(c)}
+      />
+
+      {/* Contact Us Slide-Over Sidebar Drawer */}
+      <ContactDrawer
+        isOpen={isContactDrawerOpen}
+        onClose={() => setIsContactDrawerOpen(false)}
+        onOpenConsultation={() => {
+          setIsContactDrawerOpen(false);
+          window.location.href = '/consultation.html';
+        }}
+      />
+
+      {/* Luxury Cookie Settings Banner */}
+      <CookieBanner />
     </div>
   );
 }
 
 export default function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  const isConsultationPath =
+    pathname === '/consultation' ||
+    pathname.endsWith('/consultation.html') ||
+    pathname.endsWith('/consultation');
+
+  if (isConsultationPath) {
+    return <ConsultationPage />;
+  }
 
   const isFaqPath =
     pathname === '/faq' ||
@@ -737,6 +950,17 @@ export default function App() {
 
   if (isShippingPath) {
     return <ShippingReturnsPage />;
+  }
+
+  const isPrivacyPath =
+    pathname === '/privacy-policy' ||
+    pathname.endsWith('/privacy-policy.html') ||
+    pathname.endsWith('/privacy-policy') ||
+    pathname === '/privacy' ||
+    pathname === '/cookies';
+
+  if (isPrivacyPath) {
+    return <PrivacyPolicyPage />;
   }
 
   return (
