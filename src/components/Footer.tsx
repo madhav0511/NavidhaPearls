@@ -366,8 +366,12 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft 
                 </a>
               </li>
               <li>
-                <span className="block text-[11px] text-[#667383]/80 pt-2">
-                  Atelier: G20, Village Pointe, Road No.1, Alkapoor Township, Manikonda, Hyderabad, Telangana 500089
+                <span className="block text-[11px] text-[#667383]/90 pt-2 leading-relaxed" data-testid="footer-hours-operation">
+                  <span className="font-semibold text-[#7a848f] tracking-[0.08em] uppercase text-[10px] block mb-1">
+                    HOURS OF OPERATION
+                  </span>
+                  Monday-Friday: 8:30AM - 7:30PM IST<br />
+                  Saturday and Sunday: 9:00AM - 5:00PM IST
                 </span>
               </li>
             </ul>
@@ -395,7 +399,7 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft 
             <button
               type="button"
               onClick={() => setIsCookieModalOpen(true)}
-              className="hover:underline hover:text-[#14202e] transition-colors cursor-pointer"
+              className="uppercase hover:underline hover:text-[#14202e] transition-colors cursor-pointer"
               data-testid="footer-bottom-cookie-settings"
             >
               Cookie Settings

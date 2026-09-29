@@ -137,3 +137,58 @@ export const EnquiryMailIcon: React.FC<{ className?: string; size?: number }> = 
     </svg>
   );
 };
+
+// Custom Design icon matching uploaded Logo-customDesignMenu.png
+// Features hand cupping a solitaire diamond ring with drafting pencil and circular frame
+export const CustomDesignMenuIcon: React.FC<{ className?: string; size?: number; color?: string }> = ({
+  className = 'w-3.5 h-3.5',
+  size = 14,
+  color = '#14202e',
+}) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g stroke={color} fill="none" strokeLinecap="round" strokeLinejoin="round">
+        {/* Background circular frame */}
+        <path
+          d="M 25 76 A 37 37 0 1 1 83 58"
+          strokeWidth="3.2"
+        />
+
+        {/* Hand contour at bottom holding the ring */}
+        <path
+          d="M 13 76 C 24 64 36 82 54 83 C 70 84 81 72 83 57 C 78 63 70 67 62 67 C 47 67 38 73 25 71"
+          strokeWidth="3.6"
+        />
+
+        {/* Solitaire ring band */}
+        <circle cx="49" cy="52" r="15.5" strokeWidth="3.2" />
+        <circle cx="49" cy="52" r="12.5" strokeWidth="2.4" />
+
+        {/* Solitaire brilliant cut diamond */}
+        <polygon points="43,30 55,30 59,34 39,34" strokeWidth="2.6" />
+        <polygon points="39,34 59,34 49,42" strokeWidth="2.6" />
+        <line x1="43" y1="30" x2="49" y2="42" strokeWidth="1.8" />
+        <line x1="55" y1="30" x2="49" y2="42" strokeWidth="1.8" />
+        <line x1="49" y1="30" x2="49" y2="34" strokeWidth="1.8" />
+
+        {/* Drafting pencil on right pointing towards ring */}
+        <g transform="rotate(-40 70 48)">
+          <rect x="66" y="32" width="7" height="22" rx="1" strokeWidth="2.6" />
+          <line x1="69.5" y1="32" x2="69.5" y2="54" strokeWidth="1.6" />
+          <polygon points="66,54 73,54 69.5,60" strokeWidth="2.6" />
+          <polygon points="67.8,57 71.2,57 69.5,60" fill={color} stroke="none" />
+          <rect x="65" y="29" width="9" height="3" rx="0.5" fill={color} stroke="none" />
+          <path d="M 66 29 C 66 26 73 26 73 29 Z" fill={color} stroke="none" />
+        </g>
+      </g>
+    </svg>
+  );
+};

@@ -173,7 +173,7 @@ export const NewsletterSubscription: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-13 px-8 bg-[#D4AF37] hover:bg-[#E5C158] active:bg-[#C19B26] text-[#14202e] font-sans font-bold text-[10px] tracking-[0.2em] uppercase transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60 whitespace-nowrap cursor-pointer rounded-[2px]"
+                className="h-13 px-8 bg-[#c8a45d] hover:bg-[#b38f46] active:bg-[#9a7a3e] text-[#14202e] font-sans font-bold text-[10px] tracking-[0.2em] uppercase transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60 whitespace-nowrap cursor-pointer rounded-[2px]"
                 data-testid="newsletter-submit-button"
               >
                 {isSubmitting ? 'Joining...' : 'JOIN THE INSIDE LIST'}

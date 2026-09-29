@@ -15,13 +15,23 @@ import {
   MessageSquare,
   Gem,
   Award,
-  Download
+  Download,
+  Check
 } from 'lucide-react';
 import { BrandMark } from './components/BrandMark';
 import customCommissionImg from './assets/images/regenerated_image_1790622254646.png';
 import bridalConsultationImg from './assets/images/regenerated_image_1790622256746.png';
 import sizingAlterationImg from './assets/images/regenerated_image_1790622261362.png';
-import careRestorationImg from './assets/images/regenerated_image_1790622263471.png';
+import jewelryServiceRepairImg from './assets/images/regenerated_image_1790691758631.png';
+import {
+  initAuth,
+  getAccessToken,
+  googleSignIn,
+  checkCalendarAvailability,
+  executeAllBookingActions,
+  BookingDetails
+} from './services/googleWorkspace';
+import type { User as FirebaseUser } from 'firebase/auth';
 
 const STEP_TO_HASH: Record<number, string> = {
   1: '#/services',
@@ -91,14 +101,14 @@ const SERVICES: ServiceOption[] = [
   },
   {
     id: 'care-restoration',
-    title: 'Craft Care & Heirloom Restoration Advisory',
-    category: 'Heritage Preservation',
+    title: 'Jewelry Service and Repair',
+    category: 'Service & Repair',
     duration: '45 MIN',
     description:
-      'Professional assessment for deep ultrasonic cleaning, repolishing, restringing organic freshwater pearls, and restoring antique Thewa or Meenakari craftwork.',
+      'Professional assessment and guidance for jewelry service and repair, including ultrasonic cleaning, repolishing, restringing organic pearls, and heirloom restoration.',
     highlights: ['Artisan damage assessment', 'Pearl re-knotting inspection', 'Conservation plan & estimate'],
-    image: careRestorationImg,
-    imageAlt: 'Artisanal Meenakari and precious jewelry restoration craftsmanship'
+    image: jewelryServiceRepairImg,
+    imageAlt: 'Navidha jewelry service and repair atelier with ultrasonic cleaner, pearl restringing, and fine jewelry care'
   }
 ];
 
@@ -121,7 +131,7 @@ const LOCATIONS = [
   }
 ];
 
-// Generate upcoming 10 business days for the calendar
+// Generate upcoming 10 days for the calendar with weekend detection
 const generateAvailableDates = () => {
   const dates = [];
   const today = new Date();
@@ -131,7 +141,8 @@ const generateAvailableDates = () => {
   while (count < 10) {
     const d = new Date(today);
     d.setDate(today.getDate() + offset);
-    // Include all days except Sunday for in-person, or include all
+    const dayOfWeek = d.getDay(); // 0 is Sunday, 6 is Saturday
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
     const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
     const monthName = d.toLocaleDateString('en-US', { month: 'short' });
     const dayNumber = d.getDate();
@@ -142,6 +153,7 @@ const generateAvailableDates = () => {
       weekday: dayName,
       month: monthName,
       day: dayNumber,
+      isWeekend,
       fullDisplay: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     });
     count++;
@@ -165,7 +177,7 @@ export const ConsultationPage: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceOption>(SERVICES[0]);
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0]);
   const availableDates = generateAvailableDates();
-  const [selectedDate, setSelectedDate] = useState(availableDates[0]);
+  const [selectedDate, setSelectedDate] = useState(() => availableDates.find((d) => !d.isWeekend) || availableDates[0]);
   const [selectedTime, setSelectedTime] = useState<string>(TIME_SLOTS[1]);
 
   // Client Details Form State
@@ -180,6 +192,67 @@ export const ConsultationPage: React.FC = () => {
 
   const [bookingRef, setBookingRef] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Google Workspace Token & Background Trigger
+  const [authToken, setAuthToken] = useState<string | null>(null);
+
+  // Google Calendar Availability State for busy meeting slots
+  const [busySlots, setBusySlots] = useState<string[]>([]);
+
+  // Function to query Google Calendar for busy meeting slots silently
+  const refreshCalendarAvailability = async (tokenToUse?: string) => {
+    const token = tokenToUse || authToken || (await getAccessToken());
+    if (!token) return;
+
+    try {
+      const result = await checkCalendarAvailability(
+        token,
+        selectedDate.dateStr,
+        TIME_SLOTS,
+        'navidha.pearls@gmail.com'
+      );
+      if (!result.error && result.busySlots) {
+        setBusySlots(result.busySlots);
+
+        // If the selected slot is busy, automatically pick the first available slot
+        if (result.busySlots.includes(selectedTime)) {
+          const firstOpen = TIME_SLOTS.find((s) => !result.busySlots.includes(s));
+          if (firstOpen) {
+            setSelectedTime(firstOpen);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn('Background calendar check error:', err);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = initAuth((_user, token) => {
+      setAuthToken(token);
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, []);
+
+  const triggerAutomationsSilently = async (details: BookingDetails) => {
+    try {
+      const token = authToken || (await getAccessToken());
+      if (token) {
+        await executeAllBookingActions(token, details);
+      }
+    } catch (err) {
+      console.warn('Silent automation execution error:', err);
+    }
+  };
+
+  // Re-check Google Calendar whenever selected date changes or token arrives
+  useEffect(() => {
+    if (authToken && !selectedDate.isWeekend) {
+      refreshCalendarAvailability(authToken);
+    }
+  }, [selectedDate.dateStr, authToken]);
 
   // Sync step with URL hash (e.g. #/services) matching JRNI booking portal pattern
   useEffect(() => {
@@ -208,6 +281,12 @@ export const ConsultationPage: React.FC = () => {
   }, [step]);
 
   const handleNext = () => {
+    if (step === 3 && busySlots.includes(selectedTime)) {
+      const firstOpen = TIME_SLOTS.find((s) => !busySlots.includes(s));
+      if (firstOpen) {
+        setSelectedTime(firstOpen);
+      }
+    }
     if (step < 4) {
       setStep((prev) => (prev + 1) as any);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -221,17 +300,37 @@ export const ConsultationPage: React.FC = () => {
     }
   };
 
-  const handleSubmitBooking = (e: React.FormEvent) => {
+  // Directly confirm booking and trigger Google Workspace automations
+  const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const randomCode = `NAV-${Math.floor(100000 + Math.random() * 900000)}`;
-      setBookingRef(randomCode);
-      setIsSubmitting(false);
-      setStep(5);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 700);
+    const randomCode = `NAV-${Math.floor(100000 + Math.random() * 900000)}`;
+    setBookingRef(randomCode);
+
+    const details: BookingDetails = {
+      bookingRef: randomCode,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      occasion: formData.interests,
+      notes: formData.notes,
+      serviceTitle: selectedService.title,
+      serviceDescription: selectedService.description,
+      dateDisplay: selectedDate.fullDisplay,
+      dateRaw: selectedDate.dateStr,
+      timeDisplay: selectedTime,
+      locationName: selectedLocation.name,
+      locationAddress: selectedLocation.address,
+    };
+
+    setIsSubmitting(false);
+    setStep(5);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Execute 3 actions silently in the background without exposing sync UI to customer
+    triggerAutomationsSilently(details);
   };
 
   const downloadCalendarEvent = () => {
@@ -551,52 +650,83 @@ END:VCALENDAR`;
 
             <div className="bg-white border border-[#14202e]/15 p-6 sm:p-8 rounded-xs shadow-sm">
               {/* Date horizontal strip picker */}
-              <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e] mb-4">
-                Available Dates
-              </label>
+              <div className="flex items-center justify-between mb-4">
+                <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e]">
+                  Available Dates
+                </label>
+                <span className="text-[11px] text-[#8c827a] font-normal">
+                  Saturdays & Sundays Atelier Closed
+                </span>
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
                 {availableDates.map((d) => {
-                  const isSelected = selectedDate.dateStr === d.dateStr;
+                  const isSelected = !d.isWeekend && selectedDate.dateStr === d.dateStr;
+                  const isWeekend = d.isWeekend;
+
                   return (
                     <button
                       key={d.dateStr}
                       type="button"
-                      onClick={() => setSelectedDate(d)}
-                      className={`p-3 text-center border transition-all cursor-pointer rounded-xs ${
-                        isSelected
-                          ? 'border-[#14202e] bg-[#14202e] text-white shadow-sm'
-                          : 'border-black/15 bg-[#fbf9f5] hover:border-black text-[#14202e]'
+                      disabled={isWeekend}
+                      aria-disabled={isWeekend}
+                      onClick={() => !isWeekend && setSelectedDate(d)}
+                      className={`p-3 text-center border transition-all rounded-xs select-none ${
+                        isWeekend
+                          ? 'border-black/10 bg-[#f4f2ee] text-[#a8a199] opacity-45 cursor-not-allowed'
+                          : isSelected
+                          ? 'border-[#14202e] bg-[#14202e] text-white shadow-sm cursor-pointer'
+                          : 'border-black/15 bg-[#fbf9f5] hover:border-black text-[#14202e] cursor-pointer'
                       }`}
                       data-testid={`date-slot-${d.dateStr}`}
                     >
-                      <span className="block text-[10px] uppercase tracking-widest opacity-80">{d.weekday}</span>
-                      <span className="block font-serif text-2xl font-normal my-0.5">{d.day}</span>
-                      <span className="block text-[10px] uppercase tracking-wider">{d.month}</span>
+                      <span className={`block text-[10px] uppercase tracking-widest ${isWeekend ? 'text-[#a8a199]' : 'opacity-80'}`}>
+                        {d.weekday}
+                      </span>
+                      <span className={`block font-serif text-2xl font-normal my-0.5 ${isWeekend ? 'text-[#a8a199]' : ''}`}>
+                        {d.day}
+                      </span>
+                      <span className={`block text-[10px] uppercase tracking-wider ${isWeekend ? 'text-[9px] font-medium text-[#8c827a]' : ''}`}>
+                        {isWeekend ? 'Closed' : d.month}
+                      </span>
                     </button>
                   );
                 })}
               </div>
 
               {/* Time Slots */}
-              <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e] mb-4">
-                Available Time Slots for {selectedDate.fullDisplay}
-              </label>
+              <div className="flex items-center justify-between mb-4">
+                <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e]">
+                  Available Time Slots for {selectedDate.fullDisplay}
+                </label>
+                <span className="text-[11px] text-[#667383]">
+                  45-min private session
+                </span>
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {TIME_SLOTS.map((slot) => {
-                  const isSelected = selectedTime === slot;
+                  const isBusy = busySlots.includes(slot);
+                  const isSelected = !isBusy && selectedTime === slot;
                   return (
                     <button
                       key={slot}
                       type="button"
-                      onClick={() => setSelectedTime(slot)}
-                      className={`py-3 px-4 text-center border text-xs tracking-wider transition-all cursor-pointer rounded-xs font-mono ${
-                        isSelected
-                          ? 'border-[#14202e] bg-[#14202e] text-white font-bold'
-                          : 'border-black/15 bg-white hover:border-black text-[#14202e]'
+                      disabled={isBusy}
+                      onClick={() => !isBusy && setSelectedTime(slot)}
+                      className={`py-3 px-4 text-center border text-xs tracking-wider transition-all rounded-xs font-mono select-none ${
+                        isBusy
+                          ? 'border-black/10 bg-[#f4f2ee] text-[#a8a199] opacity-45 cursor-not-allowed'
+                          : isSelected
+                          ? 'border-[#14202e] bg-[#14202e] text-white font-bold cursor-pointer shadow-xs'
+                          : 'border-black/15 bg-white hover:border-black text-[#14202e] cursor-pointer'
                       }`}
                       data-testid={`time-slot-${slot.replace(/\s+/g, '')}`}
                     >
-                      {slot}
+                      <span>{slot}</span>
+                      {isBusy && (
+                        <span className="block text-[9px] uppercase tracking-wider text-[#b02a37] font-sans font-semibold mt-0.5">
+                          Booked
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -748,7 +878,7 @@ END:VCALENDAR`;
                     />
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between">
+                  <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                     <button
                       type="button"
                       onClick={handleBack}
@@ -759,10 +889,11 @@ END:VCALENDAR`;
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-10 py-4 bg-[#14202e] text-white font-sans text-xs uppercase tracking-[0.18em] font-bold hover:bg-[#c8a45d] transition-colors cursor-pointer disabled:opacity-50"
+                      className="px-8 py-4 bg-[#14202e] text-white font-sans text-xs uppercase tracking-[0.18em] font-bold hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
                       data-testid="submit-booking-btn"
                     >
-                      {isSubmitting ? 'Confirming Appointment...' : 'Confirm Consultation Booking ✓'}
+                      <span>Confirm Consultation Booking</span>
+                      <Check size={16} />
                     </button>
                   </div>
                 </form>
@@ -821,9 +952,9 @@ END:VCALENDAR`;
           </div>
         )}
 
-        {/* STEP 5: CONFIRMATION */}
+        {/* STEP 5: CONFIRMATION & 3 AUTOMATED ACTIONS DASHBOARD */}
         {step === 5 && (
-          <div className="animate-in zoom-in-95 duration-300 max-w-[700px] mx-auto text-center">
+          <div className="animate-in zoom-in-95 duration-300 max-w-[800px] mx-auto text-center">
             <div className="h-16 w-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={36} />
             </div>
@@ -834,11 +965,11 @@ END:VCALENDAR`;
             <h1 className="font-serif text-3xl sm:text-4xl text-[#14202e] tracking-tight">
               We Look Forward to Welcoming You
             </h1>
-            <p className="text-sm text-[#555555] mt-3 leading-relaxed">
-              Your consultation request has been reserved with our Senior Jewelry Concierge (<a href="mailto:navidha.pearls@gmail.com" className="text-[#9a7a3e] underline font-medium">navidha.pearls@gmail.com</a>). A confirmation email and calendar invitation have been dispatched to{' '}
-              <strong className="text-[#14202e]">{formData.email || 'your email'}</strong>.
+            <p className="text-sm text-[#555555] mt-3 leading-relaxed max-w-xl mx-auto">
+              Your consultation request is registered with Navidha Pearls Atelier. A confirmation with your full appointment details and calendar invitation has been prepared.
             </p>
 
+            {/* Booking Details Card */}
             <div className="my-8 p-6 bg-white border border-[#14202e]/15 text-left rounded-xs shadow-sm space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/10">
                 <div className="flex items-center gap-4">
@@ -875,6 +1006,13 @@ END:VCALENDAR`;
                   <span className="font-medium text-[#14202e]">{formData.firstName} {formData.lastName}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Customer Reassurance Note */}
+            <div className="my-8 p-5 bg-white border border-[#14202e]/10 text-center rounded-xs shadow-xs">
+              <p className="text-xs text-[#555555] leading-relaxed max-w-lg mx-auto">
+                A formal calendar invitation and confirmation dossier have been prepared for your visit. Our Senior Concierge will be in touch should you require custom design references prior to your session.
+              </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
