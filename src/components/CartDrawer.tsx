@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Trash2, Minus, Plus, ShoppingBag, CheckCircle2 } from 'lucide-react';
+import { X, Trash2, Minus, Plus, ShoppingBag, Lock, ShieldCheck } from 'lucide-react';
 import { CartItem, formatINR } from '../data';
+import { CheckoutModal } from './CheckoutModal';
 
 interface CartDrawerProps {
   open: boolean;
@@ -8,6 +9,7 @@ interface CartDrawerProps {
   onClose: () => void;
   onQuantityChange: (productId: string, quantity: number) => void;
   onRemove: (productId: string) => void;
+  onClearCart?: () => void;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -15,7 +17,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   items,
   onClose,
   onQuantityChange,
-  onRemove
+  onRemove,
+  onClearCart,
 }) => {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
@@ -168,58 +171,32 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
             <button
               type="button"
-              className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-none bg-[#14202e] font-sans text-[10px] uppercase tracking-[0.2em] text-[#f8f1e4] hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors cursor-pointer"
+              className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-none bg-[#14202e] font-sans text-[10px] uppercase tracking-[0.2em] text-[#f8f1e4] hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors cursor-pointer shadow-md"
               onClick={() => setShowCheckoutModal(true)}
               data-testid="cart-checkout-button"
             >
-              Preview checkout
+              <Lock size={13} />
+              <span>Proceed to Checkout</span>
             </button>
 
-            <p className="mt-3 text-center text-[10px] uppercase tracking-[0.16em] text-[#9a7a3e]">
-              Launching soon · made to last
-            </p>
+            <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-[#9a7a3e]">
+              <ShieldCheck size={13} />
+              <span>Armored Delivery & Transit Insurance Included</span>
+            </div>
           </footer>
         )}
       </aside>
 
-      {/* Checkout Preview Modal */}
-      {showCheckoutModal && (
-        <div
-          className="fixed inset-0 z-60 flex items-center justify-center bg-[#14202e]/70 p-4 backdrop-blur-sm"
-          onClick={() => setShowCheckoutModal(false)}
-        >
-          <div
-            className="w-full max-w-md bg-[#fbf9f5] p-8 shadow-2xl relative border border-[#c8a45d]/30 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setShowCheckoutModal(false)}
-              className="absolute right-4 top-4 text-[#667383] hover:text-[#14202e]"
-            >
-              <X size={18} />
-            </button>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#c8a45d]/15 text-[#9a7a3e]">
-              <CheckCircle2 size={24} />
-            </div>
-            <p className="eyebrow text-[#9a7a3e] mt-4">Pre-Launch Preview</p>
-            <h3 className="font-serif text-2xl mt-2 text-[#14202e]">Collection Launching Soon</h3>
-            <p className="mt-3 text-xs leading-6 text-[#667383]">
-              Your selection of {items.length} {items.length === 1 ? 'piece' : 'pieces'} totaling {formatINR(subtotal)} has been saved to your preview bag. Checkout will be enabled when the public launch opens.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setShowCheckoutModal(false);
-                onClose();
-              }}
-              className="mt-6 w-full bg-[#14202e] text-[#f8f1e4] py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors"
-            >
-              Continue exploring
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Luxury In-Website Checkout & Payment Gateway Modal */}
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        items={items}
+        subtotal={subtotal}
+        onClose={() => setShowCheckoutModal(false)}
+        onOrderSuccess={() => {
+          onClearCart?.();
+        }}
+      />
     </div>
   );
 };

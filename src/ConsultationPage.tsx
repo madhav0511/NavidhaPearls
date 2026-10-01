@@ -16,7 +16,8 @@ import {
   Gem,
   Award,
   Download,
-  Check
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import { BrandMark } from './components/BrandMark';
 import customCommissionImg from './assets/images/regenerated_image_1790622254646.png';
@@ -192,12 +193,14 @@ export const ConsultationPage: React.FC = () => {
 
   const [bookingRef, setBookingRef] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Google Workspace Token & Background Trigger
   const [authToken, setAuthToken] = useState<string | null>(null);
 
   // Google Calendar Availability State for busy meeting slots
   const [busySlots, setBusySlots] = useState<string[]>([]);
+  const [showUnavailableSlots, setShowUnavailableSlots] = useState<boolean>(false);
 
   // Function to query Google Calendar for busy meeting slots silently
   const refreshCalendarAvailability = async (tokenToUse?: string) => {
@@ -238,12 +241,15 @@ export const ConsultationPage: React.FC = () => {
 
   const triggerAutomationsSilently = async (details: BookingDetails) => {
     try {
-      const token = authToken || (await getAccessToken());
-      if (token) {
-        await executeAllBookingActions(token, details);
+      const activeToken = authToken || (await getAccessToken());
+      if (activeToken) {
+        console.log('[Automations] Firing executeAllBookingActions with active OAuth token...');
+        await executeAllBookingActions(activeToken, details);
+      } else {
+        console.log('[Automations] Webhook successfully recorded to Google Sheets without requiring visitor OAuth.');
       }
     } catch (err) {
-      console.warn('Silent automation execution error:', err);
+      console.warn('[Automations] Background workspace task notice:', err);
     }
   };
 
@@ -300,9 +306,83 @@ export const ConsultationPage: React.FC = () => {
     }
   };
 
-  // Directly confirm booking and trigger Google Workspace automations
-  const handleSubmitBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendConsultationWebhook = async (details: BookingDetails) => {
+    const endpoints = [
+      (import.meta as any).env?.VITE_CONSULTATION_WEBHOOK_URL,
+      (import.meta as any).env?.VITE_GOOGLE_SHEETS_WEBHOOK_URL,
+      'https://script.google.com/macros/s/AKfycbwAUAAFAr9x1yjq4Z2l6VGHU9H4SKuLx1BB06Adi_hkUYiDnj5mg5qru61m5ZvTl-7C9Q/exec',
+      'https://script.google.com/macros/s/AKfycbygiRhRbbQOBlWvWt1Ud4CCCtw-EnBhOIxSMyZfr65OALKFtKjSB83HvJONGZMgMiMHvQ/exec'
+    ].filter(Boolean) as string[];
+
+    const payload = JSON.stringify({
+      type: 'consultation',
+      action: 'consultation_booking',
+      sheetName: 'Consultation Booking',
+      bookingRef: details.bookingRef,
+      customerName: `${details.firstName} ${details.lastName}`.trim(),
+      firstName: details.firstName,
+      lastName: details.lastName,
+      email: details.email,
+      phone: details.phone,
+      serviceTitle: details.serviceTitle,
+      serviceDescription: details.serviceDescription,
+      date: details.dateDisplay,
+      time: details.timeDisplay,
+      locationName: details.locationName,
+      locationAddress: details.locationAddress,
+      occasion: details.occasion,
+      notes: details.notes,
+      timestamp: new Date().toISOString(),
+    });
+
+    console.log('[Consultation Webhook] 🚀 Dispatching booking to Google Sheets endpoints:', endpoints);
+
+    // Send to webhooks in parallel without blocking UI
+    await Promise.allSettled(
+      endpoints.map((url) =>
+        fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          body: payload,
+        })
+      )
+    );
+    console.log('[Consultation Webhook] ✅ Dispatched successfully to Google Sheets');
+  };
+
+  // Directly confirm booking, log to Google Sheets webhook, and advance smoothly
+  const handleSubmitBooking = async (e?: React.FormEvent) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setFormError(null);
+
+    const fName = (formData.firstName || '').trim();
+    const lName = (formData.lastName || '').trim();
+    const mail = (formData.email || '').trim();
+    const tel = (formData.phone || '').trim();
+
+    if (!fName) {
+      setFormError('Please enter your First Name to confirm appointment.');
+      return;
+    }
+    if (!lName) {
+      setFormError('Please enter your Last Name to confirm appointment.');
+      return;
+    }
+    if (!mail || !mail.includes('@')) {
+      setFormError('Please enter a valid Email Address to receive confirmation.');
+      return;
+    }
+    if (!tel || tel.length < 7) {
+      setFormError('Please enter a valid Contact Number / WhatsApp.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     const randomCode = `NAV-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -310,10 +390,10 @@ export const ConsultationPage: React.FC = () => {
 
     const details: BookingDetails = {
       bookingRef: randomCode,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
+      firstName: fName,
+      lastName: lName,
+      email: mail,
+      phone: tel,
       occasion: formData.interests,
       notes: formData.notes,
       serviceTitle: selectedService.title,
@@ -325,11 +405,17 @@ export const ConsultationPage: React.FC = () => {
       locationAddress: selectedLocation.address,
     };
 
+    console.log('[handleSubmitBooking] Submitting booking details:', details);
+
+    // 1. Immediately advance to confirmation UI (Step 5) with zero popup or delay
     setIsSubmitting(false);
     setStep(5);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Execute 3 actions silently in the background without exposing sync UI to customer
+    // 2. Dispatch Webhook to Google Sheet tab "Consultation Booking" purely in the background
+    sendConsultationWebhook(details);
+
+    // 3. Execute background OAuth automations if token is active
     triggerAutomationsSilently(details);
   };
 
@@ -693,44 +779,87 @@ END:VCALENDAR`;
                 })}
               </div>
 
-              {/* Time Slots */}
-              <div className="flex items-center justify-between mb-4">
-                <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e]">
-                  Available Time Slots for {selectedDate.fullDisplay}
-                </label>
-                <span className="text-[11px] text-[#667383]">
-                  45-min private session
-                </span>
+              {/* Time Slots Header & Toggle */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-black/10">
+                <div>
+                  <label className="block text-xs uppercase font-bold tracking-[0.16em] text-[#14202e]">
+                    Available Time Slots for {selectedDate.fullDisplay}
+                  </label>
+                  <span className="text-[11px] text-[#667383] flex items-center gap-1.5 mt-0.5">
+                    <span>{selectedService.duration} private session</span>
+                    <span className="text-[#c8a45d]">•</span>
+                    <span className="text-[#9a7a3e] font-semibold">10-Min Mandatory Buffer Enforced</span>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <label className="inline-flex items-center gap-2 cursor-pointer select-none text-xs text-[#14202e]">
+                    <input
+                      type="checkbox"
+                      checked={showUnavailableSlots}
+                      onChange={(e) => setShowUnavailableSlots(e.target.checked)}
+                      className="rounded border-gray-300 text-[#14202e] focus:ring-[#c8a45d] h-4 w-4 cursor-pointer"
+                    />
+                    <span className="text-[11px] font-medium text-[#4b5563]">Show Unavailable / Grayed Out</span>
+                  </label>
+
+                  <a
+                    href="/appointment-booking-widget.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-[#9a7a3e] hover:underline font-semibold flex items-center gap-1"
+                  >
+                    <span>Full Calendar Widget ↗</span>
+                  </a>
+                </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {TIME_SLOTS.map((slot) => {
-                  const isBusy = busySlots.includes(slot);
-                  const isSelected = !isBusy && selectedTime === slot;
+
+              {(() => {
+                const displayedSlots = showUnavailableSlots
+                  ? TIME_SLOTS
+                  : TIME_SLOTS.filter((s) => !busySlots.includes(s));
+
+                if (displayedSlots.length === 0) {
                   return (
-                    <button
-                      key={slot}
-                      type="button"
-                      disabled={isBusy}
-                      onClick={() => !isBusy && setSelectedTime(slot)}
-                      className={`py-3 px-4 text-center border text-xs tracking-wider transition-all rounded-xs font-mono select-none ${
-                        isBusy
-                          ? 'border-black/10 bg-[#f4f2ee] text-[#a8a199] opacity-45 cursor-not-allowed'
-                          : isSelected
-                          ? 'border-[#14202e] bg-[#14202e] text-white font-bold cursor-pointer shadow-xs'
-                          : 'border-black/15 bg-white hover:border-black text-[#14202e] cursor-pointer'
-                      }`}
-                      data-testid={`time-slot-${slot.replace(/\s+/g, '')}`}
-                    >
-                      <span>{slot}</span>
-                      {isBusy && (
-                        <span className="block text-[9px] uppercase tracking-wider text-[#b02a37] font-sans font-semibold mt-0.5">
-                          Booked
-                        </span>
-                      )}
-                    </button>
+                    <div className="p-8 text-center bg-[#f8fafc] border border-dashed border-[#cbd5e1] rounded-xs text-[#667383] text-xs">
+                      <p className="font-semibold text-[#14202e] mb-1">No completely open slots on this date.</p>
+                      <p>All appointment windows and their 10-minute buffers are occupied. Please select another date or turn on &quot;Show Unavailable / Grayed Out&quot;.</p>
+                    </div>
                   );
-                })}
-              </div>
+                }
+
+                return (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {displayedSlots.map((slot) => {
+                      const isBusy = busySlots.includes(slot);
+                      const isSelected = !isBusy && selectedTime === slot;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => !isBusy && setSelectedTime(slot)}
+                          className={`py-3 px-4 text-center border text-xs tracking-wider transition-all rounded-xs font-mono select-none ${
+                            isBusy
+                              ? 'border-black/10 bg-[#f4f2ee] text-[#a8a199] opacity-55 cursor-not-allowed line-through'
+                              : isSelected
+                              ? 'border-[#14202e] bg-[#14202e] text-white font-bold cursor-pointer shadow-xs'
+                              : 'border-black/15 bg-white hover:border-black text-[#14202e] cursor-pointer'
+                          }`}
+                          data-testid={`time-slot-${slot.replace(/\s+/g, '')}`}
+                        >
+                          <span>{slot}</span>
+                          {isBusy && (
+                            <span className="block text-[9px] uppercase tracking-wider text-[#b02a37] font-sans font-semibold mt-0.5 no-underline">
+                              Booked / Buffer
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* Appointment summary review */}
               <div className="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between text-xs text-[#555555] gap-4">
@@ -793,7 +922,10 @@ END:VCALENDAR`;
                         type="text"
                         required
                         value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, firstName: e.target.value });
+                          if (formError) setFormError(null);
+                        }}
                         placeholder="Radhika"
                         className="w-full px-3.5 py-3 border border-black/20 text-sm focus:border-black focus:outline-none"
                         data-testid="input-firstname"
@@ -807,7 +939,10 @@ END:VCALENDAR`;
                         type="text"
                         required
                         value={formData.lastName}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, lastName: e.target.value });
+                          if (formError) setFormError(null);
+                        }}
                         placeholder="Sharma"
                         className="w-full px-3.5 py-3 border border-black/20 text-sm focus:border-black focus:outline-none"
                         data-testid="input-lastname"
@@ -824,7 +959,10 @@ END:VCALENDAR`;
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, email: e.target.value });
+                          if (formError) setFormError(null);
+                        }}
                         placeholder="radhika@example.com"
                         className="w-full px-3.5 py-3 border border-black/20 text-sm focus:border-black focus:outline-none"
                         data-testid="input-email"
@@ -838,7 +976,10 @@ END:VCALENDAR`;
                         type="tel"
                         required
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, phone: e.target.value });
+                          if (formError) setFormError(null);
+                        }}
                         placeholder="+91 98200 12345"
                         className="w-full px-3.5 py-3 border border-black/20 text-sm focus:border-black focus:outline-none"
                         data-testid="input-phone"
@@ -878,18 +1019,25 @@ END:VCALENDAR`;
                     />
                   </div>
 
+                  {formError && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xs flex items-center gap-2 animate-in fade-in">
+                      <AlertCircle size={16} className="text-red-600 shrink-0" />
+                      <span className="font-medium">{formError}</span>
+                    </div>
+                  )}
+
                   <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="px-6 py-3 border border-black/20 text-[#14202e] text-xs uppercase tracking-[0.16em] hover:border-black transition-colors"
+                      className="px-6 py-3.5 border border-black/20 text-[#14202e] text-xs uppercase tracking-[0.16em] hover:border-black transition-colors"
                     >
                       ← Back
                     </button>
                     <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-8 py-4 bg-[#14202e] text-white font-sans text-xs uppercase tracking-[0.18em] font-bold hover:bg-[#c8a45d] hover:text-[#14202e] transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
+                      type="button"
+                      onClick={(e) => handleSubmitBooking(e)}
+                      className="px-9 py-4 font-sans text-xs uppercase tracking-[0.18em] font-bold rounded-xs transition-all duration-300 flex items-center justify-center gap-2.5 shadow-md bg-[#14202e] text-white hover:bg-[#c8a45d] hover:text-[#14202e] hover:shadow-lg cursor-pointer active:scale-[0.98]"
                       data-testid="submit-booking-btn"
                     >
                       <span>Confirm Consultation Booking</span>

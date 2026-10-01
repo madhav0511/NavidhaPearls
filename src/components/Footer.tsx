@@ -346,7 +346,7 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft 
               </li>
               <li>
                 <a
-                  href="https://wa.me/919000022840?text=Hello%20Navidha%20Concierge%2C%20I%20would%20like%20assistance."
+                  href="https://wa.me/918985133732?text=Hello%20Navidha%20Concierge%2C%20I%20would%20like%20assistance."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5 text-[#9a7a3e]"

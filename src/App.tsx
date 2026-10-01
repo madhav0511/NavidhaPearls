@@ -43,6 +43,7 @@ import { CookieBanner } from './components/CookieBanner';
 import { ShippingCountryModal, SUPPORTED_COUNTRIES, ShippingCountry } from './components/ShippingCountryModal';
 import { ContactDrawer } from './components/ContactDrawer';
 import { ConsultationPage } from './ConsultationPage';
+import { FloatingWhatsAppChat } from './components/FloatingWhatsAppChat';
 import { GlobeGridIcon, ChatBubbleIcon, CustomDesignMenuIcon } from './components/TopBarIcons';
 import { ToastProvider, useToast } from './components/Toast';
 import { useScrollToTopOnMount } from './hooks/useScrollToTop';
@@ -925,6 +926,7 @@ function Storefront() {
         onClose={() => setIsCartOpen(false)}
         onQuantityChange={handleQuantityChange}
         onRemove={handleRemoveFromCart}
+        onClearCart={() => setCartItems([])}
       />
 
       {/* Campaign Gallery Lookbook Modal */}
@@ -977,48 +979,58 @@ function Storefront() {
 export default function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
 
-  const isConsultationPath =
-    pathname === '/consultation' ||
-    pathname.endsWith('/consultation.html') ||
-    pathname.endsWith('/consultation');
+  const renderContent = () => {
+    const isConsultationPath =
+      pathname === '/consultation' ||
+      pathname.endsWith('/consultation.html') ||
+      pathname.endsWith('/consultation');
 
-  if (isConsultationPath) {
-    return <ConsultationPage />;
-  }
+    if (isConsultationPath) {
+      return <ConsultationPage />;
+    }
 
-  const isFaqPath =
-    pathname === '/faq' ||
-    pathname.endsWith('/faq.html') ||
-    pathname.endsWith('/faq');
+    const isFaqPath =
+      pathname === '/faq' ||
+      pathname.endsWith('/faq.html') ||
+      pathname.endsWith('/faq');
 
-  if (isFaqPath) {
-    return <FaqPage />;
-  }
+    if (isFaqPath) {
+      return <FaqPage />;
+    }
 
-  const isShippingPath =
-    pathname === '/shipping-returns' ||
-    pathname.endsWith('/shipping-returns.html') ||
-    pathname.endsWith('/shipping-returns') ||
-    pathname === '/shipping';
+    const isShippingPath =
+      pathname === '/shipping-returns' ||
+      pathname.endsWith('/shipping-returns.html') ||
+      pathname.endsWith('/shipping-returns') ||
+      pathname === '/shipping';
 
-  if (isShippingPath) {
-    return <ShippingReturnsPage />;
-  }
+    if (isShippingPath) {
+      return <ShippingReturnsPage />;
+    }
 
-  const isPrivacyPath =
-    pathname === '/privacy-policy' ||
-    pathname.endsWith('/privacy-policy.html') ||
-    pathname.endsWith('/privacy-policy') ||
-    pathname === '/privacy' ||
-    pathname === '/cookies';
+    const isPrivacyPath =
+      pathname === '/privacy-policy' ||
+      pathname.endsWith('/privacy-policy.html') ||
+      pathname.endsWith('/privacy-policy') ||
+      pathname === '/privacy' ||
+      pathname === '/cookies';
 
-  if (isPrivacyPath) {
-    return <PrivacyPolicyPage />;
-  }
+    if (isPrivacyPath) {
+      return <PrivacyPolicyPage />;
+    }
+
+    return (
+      <ToastProvider>
+        <Storefront />
+      </ToastProvider>
+    );
+  };
 
   return (
-    <ToastProvider>
-      <Storefront />
-    </ToastProvider>
+    <>
+      {renderContent()}
+      {/* Global Floating WhatsApp Concierge Chat Widget */}
+      <FloatingWhatsAppChat />
+    </>
   );
 }

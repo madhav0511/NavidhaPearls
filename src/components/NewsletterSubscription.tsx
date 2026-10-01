@@ -86,11 +86,11 @@ export const NewsletterSubscription: React.FC = () => {
           method: 'POST',
           mode: 'no-cors', // Google Apps Script redirects require no-cors mode in browsers
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
           },
           body: JSON.stringify({
             email: cleanEmail,
-            source: 'Website Inside List',
+            source: 'Website Newsletter (Inside List)',
             timestamp: new Date().toISOString()
           })
         });

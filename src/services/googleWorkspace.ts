@@ -31,7 +31,9 @@ provider.setCustomParameters({
 const TOKEN_KEY = 'navidha_workspace_access_token';
 let isSigningIn = false;
 let cachedAccessToken: string | null =
-  typeof window !== 'undefined' ? sessionStorage.getItem(TOKEN_KEY) : null;
+  typeof window !== 'undefined'
+    ? sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY)
+    : null;
 let currentUser: User | null = null;
 
 export interface BookingDetails {
@@ -67,11 +69,22 @@ export const initAuth = (
 ) => {
   return onAuthStateChanged(auth, async (user: User | null) => {
     currentUser = user;
-    if (user && cachedAccessToken) {
-      if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
+    const token =
+      cachedAccessToken ||
+      (typeof window !== 'undefined'
+        ? sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY)
+        : null);
+
+    console.log('[GoogleWorkspace Auth] initAuth onAuthStateChanged:', {
+      userEmail: user?.email || null,
+      tokenFound: !!token,
+    });
+
+    if (user && token) {
+      cachedAccessToken = token;
+      if (onAuthSuccess) onAuthSuccess(user, token);
     } else {
       if (!isSigningIn) {
-        cachedAccessToken = null;
         if (onAuthFailure) onAuthFailure();
       }
     }
@@ -84,6 +97,7 @@ export const initAuth = (
 export const googleSignIn = async (): Promise<{ user: User; accessToken: string }> => {
   try {
     isSigningIn = true;
+    console.log('[GoogleWorkspace Auth] Opening Google Sign-In popup with Workspace scopes...');
     const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
     if (!credential?.accessToken) {
@@ -95,9 +109,10 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
       localStorage.setItem(TOKEN_KEY, credential.accessToken);
     }
     currentUser = result.user;
+    console.log('[GoogleWorkspace Auth] Sign-In successful for:', result.user.email);
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
-    console.error('Google Workspace sign in error:', error);
+    console.error('[GoogleWorkspace Auth] Google Workspace sign in error:', error);
     throw error;
   } finally {
     isSigningIn = false;
@@ -105,14 +120,19 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
 };
 
 export const getAccessToken = async (): Promise<string | null> => {
-  if (cachedAccessToken) return cachedAccessToken;
+  if (cachedAccessToken) {
+    console.log('[GoogleWorkspace Auth] getAccessToken: Using in-memory cached token');
+    return cachedAccessToken;
+  }
   if (typeof window !== 'undefined') {
     const token = sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
     if (token) {
       cachedAccessToken = token;
+      console.log('[GoogleWorkspace Auth] getAccessToken: Retrieved token from storage');
       return token;
     }
   }
+  console.log('[GoogleWorkspace Auth] getAccessToken: No token available in memory or storage');
   return null;
 };
 
@@ -252,6 +272,7 @@ export async function sendCustomerConfirmationEmail(
 
     const raw = createBase64MimeMessage(details.email, senderEmail, emailSubject, htmlBody);
 
+    console.log('[sendCustomerConfirmationEmail] Dispatching Gmail API call for recipient:', details.email);
     const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',
       headers: {
@@ -261,15 +282,19 @@ export async function sendCustomerConfirmationEmail(
       body: JSON.stringify({ raw }),
     });
 
+    console.log('[sendCustomerConfirmationEmail] Gmail API response HTTP status:', res.status);
+
     if (!res.ok) {
       const errJson = await res.json().catch(() => ({}));
+      console.error('[sendCustomerConfirmationEmail] Gmail API failed:', errJson);
       throw new Error(errJson.error?.message || `Gmail API error (${res.status})`);
     }
 
     const resData = await res.json();
+    console.log('[sendCustomerConfirmationEmail] Gmail successfully sent! Message ID:', resData.id);
     return { success: true, messageId: resData.id };
   } catch (err: any) {
-    console.error('Failed to send confirmation email via Gmail API:', err);
+    console.error('[sendCustomerConfirmationEmail] Failed to send confirmation email via Gmail API:', err);
     return { success: false, error: err.message || 'Error sending email' };
   }
 }
@@ -358,6 +383,7 @@ export async function createNavidhaCalendarEvent(
       },
     };
 
+    console.log('[createNavidhaCalendarEvent] Dispatching Google Calendar API event create...');
     const res = await fetch(
       'https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all',
       {
@@ -370,19 +396,23 @@ export async function createNavidhaCalendarEvent(
       }
     );
 
+    console.log('[createNavidhaCalendarEvent] Calendar API response HTTP status:', res.status);
+
     if (!res.ok) {
       const errJson = await res.json().catch(() => ({}));
+      console.error('[createNavidhaCalendarEvent] Calendar API error response:', errJson);
       throw new Error(errJson.error?.message || `Calendar API error (${res.status})`);
     }
 
     const eventData = await res.json();
+    console.log('[createNavidhaCalendarEvent] Calendar event successfully created! ID:', eventData.id, 'Link:', eventData.htmlLink);
     return {
       success: true,
       eventId: eventData.id,
       htmlLink: eventData.htmlLink,
     };
   } catch (err: any) {
-    console.error('Failed to create Calendar entry:', err);
+    console.error('[createNavidhaCalendarEvent] Failed to create Calendar entry:', err);
     return { success: false, error: err.message || 'Error creating calendar entry' };
   }
 }
@@ -515,6 +545,9 @@ export async function appendConsultationToGoogleSheet(
       'Confirmed',
     ];
 
+    console.log('[appendConsultationToGoogleSheet] Appending row to Google Sheet ID:', spreadsheetId, 'Tab:', tabName);
+    console.log('[appendConsultationToGoogleSheet] Row payload:', newRow);
+
     const appendRes = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
         tabName
@@ -532,8 +565,11 @@ export async function appendConsultationToGoogleSheet(
       }
     );
 
+    console.log('[appendConsultationToGoogleSheet] Sheets API response HTTP status:', appendRes.status);
+
     if (!appendRes.ok) {
       const errJson = await appendRes.json().catch(() => ({}));
+      console.error('[appendConsultationToGoogleSheet] Sheets API append error:', errJson);
       throw new Error(errJson.error?.message || `Failed to append row to Sheets (${appendRes.status})`);
     }
 
@@ -541,13 +577,14 @@ export async function appendConsultationToGoogleSheet(
       spreadsheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit`;
     }
 
+    console.log('[appendConsultationToGoogleSheet] Row successfully appended! Sheet URL:', spreadsheetUrl);
     return {
       success: true,
       sheetId: spreadsheetId || undefined,
       spreadsheetUrl: spreadsheetUrl || undefined,
     };
   } catch (err: any) {
-    console.error('Failed to append to Google Sheet:', err);
+    console.error('[appendConsultationToGoogleSheet] Failed to append to Google Sheet:', err);
     return { success: false, error: err.message || 'Error updating Google Sheet' };
   }
 }
@@ -559,11 +596,18 @@ export async function executeAllBookingActions(
   token: string,
   details: BookingDetails
 ): Promise<AutomationResult> {
+  console.log('[executeAllBookingActions] 🚀 Initiating 3 Google Workspace actions for ref:', details.bookingRef);
+  console.log('[executeAllBookingActions] Token preview:', token ? `${token.substring(0, 10)}...` : 'NONE');
+
   const [emailResult, calendarResult, sheetResult] = await Promise.all([
     sendCustomerConfirmationEmail(token, details),
     createNavidhaCalendarEvent(token, details),
     appendConsultationToGoogleSheet(token, details),
   ]);
+
+  console.log('[executeAllBookingActions] ✅ Action 1 (Gmail send):', emailResult);
+  console.log('[executeAllBookingActions] ✅ Action 2 (Calendar event):', calendarResult);
+  console.log('[executeAllBookingActions] ✅ Action 3 (Sheets append):', sheetResult);
 
   return {
     action1Email: emailResult,
@@ -648,6 +692,8 @@ export async function checkCalendarAvailability(
       const slotStartTime = new Date(`${dateStr}T${pad(hours)}:${pad(minutes)}:00+05:30`).getTime();
       const slotEndTime = slotStartTime + 45 * 60 * 1000;
 
+      const bufferMs = 10 * 60 * 1000; // Mandatory 10-minute buffer between meetings
+
       const hasConflict = activeEvents.some((evt) => {
         if (!evt.start || !evt.end) return false;
         const evtStart = evt.start.dateTime
@@ -657,7 +703,14 @@ export async function checkCalendarAvailability(
           ? new Date(evt.end.dateTime).getTime()
           : new Date(`${evt.end.date}T23:59:59+05:30`).getTime();
 
-        return slotStartTime < evtEnd && slotEndTime > evtStart;
+        // 1. Direct meeting overlap
+        const isOverlap = slotStartTime < evtEnd && slotEndTime > evtStart;
+        // 2. Mandatory 10-min buffer gap after meeting (e.g., meeting ends 10:30, slot must start >= 10:40)
+        const isBufferAfter = slotStartTime >= evtEnd && slotStartTime < evtEnd + bufferMs;
+        // 3. Mandatory 10-min buffer gap before meeting (e.g., slot must finish 10 min prior to meeting start)
+        const isBufferBefore = slotEndTime <= evtStart && slotEndTime + bufferMs > evtStart;
+
+        return isOverlap || isBufferAfter || isBufferBefore;
       });
 
       if (hasConflict) {

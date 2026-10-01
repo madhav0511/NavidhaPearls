@@ -26,6 +26,7 @@ export default defineConfig(() => {
           shipping: path.resolve(__dirname, 'shipping-returns.html'),
           privacy: path.resolve(__dirname, 'privacy-policy.html'),
           consultation: path.resolve(__dirname, 'consultation.html'),
+          widget: path.resolve(__dirname, 'appointment-booking-widget.html'),
         },
       },
     },

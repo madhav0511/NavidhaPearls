@@ -59,15 +59,15 @@ export const ContactDrawer: React.FC<ContactDrawerProps> = ({
 
             {/* Action Buttons Stack (Styled exactly like David Yurman reference image) */}
             <div className="mt-8 sm:mt-10 space-y-3.5">
-              {/* 1. CHAT WITH US (Launches WhatsApp +919000022840) */}
+              {/* 1. CHAT WITH US (Launches WhatsApp +918985133732) */}
               <div>
                 <a
-                  href="https://wa.me/919000022840?text=Hello%20Navidha%20Team%2C%20I%20would%20like%20to%20inquire%20about%20your%20jewelry%20collection."
+                  href="https://wa.me/918985133732?text=Hello%20Navidha%20Team%2C%20I%20would%20like%20to%20inquire%20about%20your%20jewelry%20collection."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2.5 w-full border border-black bg-white hover:bg-black hover:text-white transition-all py-3.5 sm:py-4 px-4 text-center cursor-pointer group no-underline text-[#14202e]"
                   data-testid="contact-btn-chat"
-                  aria-label="Chat with Us on WhatsApp at +91 90000 22840"
+                  aria-label="Chat with Us on WhatsApp"
                 >
                   <WhatsAppIcon size={18} className="shrink-0 text-inherit transition-colors" />
                   <span className="block text-xs sm:text-[13px] font-bold tracking-[0.14em] uppercase text-inherit">
