@@ -25,8 +25,6 @@ import {
   PHILOSOPHY_PORTRAIT
 } from './data';
 import { BrandMark } from './components/BrandMark';
-import HERO_VIDEO_MP4 from './assets/videos/hero-jewelry-craft.mp4';
-import HERO_VIDEO_POSTER from './assets/videos/hero-video-poster.jpg';
 import { LaunchPopup } from './components/LaunchPopup';
 import { ProductCard } from './components/ProductCard';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -44,6 +42,7 @@ import { ShippingCountryModal, SUPPORTED_COUNTRIES, ShippingCountry } from './co
 import { ContactDrawer } from './components/ContactDrawer';
 import { ConsultationPage } from './ConsultationPage';
 import { FloatingWhatsAppChat } from './components/FloatingWhatsAppChat';
+import { GulabiMeenakariHero } from './components/GulabiMeenakariHero';
 import { GlobeGridIcon, ChatBubbleIcon, CustomDesignMenuIcon } from './components/TopBarIcons';
 import { ToastProvider, useToast } from './components/Toast';
 import { useScrollToTopOnMount } from './hooks/useScrollToTop';
@@ -92,27 +91,6 @@ function Storefront() {
   }, []);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
-  const [isHeroAudioPlaying, setIsHeroAudioPlaying] = useState<boolean>(false);
-
-  const toggleHeroAudio = () => {
-    if (!heroVideoRef.current) return;
-    if (heroVideoRef.current.muted) {
-      heroVideoRef.current.muted = false;
-      heroVideoRef.current.volume = 1.0;
-      heroVideoRef.current
-        .play()
-        .then(() => {
-          setIsHeroAudioPlaying(true);
-        })
-        .catch(() => {
-          setIsHeroAudioPlaying(false);
-        });
-    } else {
-      heroVideoRef.current.muted = true;
-      setIsHeroAudioPlaying(false);
-    }
-  };
 
   // Filtered and sorted products
   const filteredProducts = useMemo(() => {
@@ -431,92 +409,11 @@ function Storefront() {
 
       {/* Main Content Area */}
       <main id="top">
-        {/* Hero Section */}
-        <section className="hero-section" data-testid="hero-section">
-          {/* Ambient Video Background behind the text */}
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
-            <video
-              ref={heroVideoRef}
-              autoPlay
-              loop
-              muted
-              playsInline
-              poster={HERO_VIDEO_POSTER}
-              className="hero-video-bg"
-              data-testid="hero-bg-video"
-              onPlay={() => {
-                if (heroVideoRef.current && !heroVideoRef.current.muted) {
-                  setIsHeroAudioPlaying(true);
-                }
-              }}
-              onPause={() => setIsHeroAudioPlaying(false)}
-            >
-              <source src={HERO_VIDEO_MP4} type="video/mp4" />
-            </video>
-            {/* Elegant Luxury Scrim & Gradient Overlays for maximum text contrast and vibrant craft display */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#14202e]/92 via-[#14202e]/72 to-[#14202e]/35" />
-            <div className="absolute inset-0 bg-[#14202e]/15 mix-blend-multiply" />
-            {/* Subtle bottom fade into content background */}
-            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#14202e] to-transparent pointer-events-none" />
-          </div>
-
-          <div className="hero-copy">
-            <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-14 py-16 sm:py-20 lg:py-24 relative">
-              <p className="eyebrow text-[#c8a45d]" data-testid="hero-eyebrow">
-                Navidha Pearls &amp; Jewelry · Est. India
-              </p>
-              <div className="mt-4 max-w-[760px]">
-                <h1
-                  className="font-serif text-4xl sm:text-5xl lg:text-[4rem] leading-[1.02] tracking-[-0.035em] text-[#f8f1e4]"
-                  data-testid="hero-title"
-                >
-                  Jewelry,<br className="hidden sm:inline" />
-                  <em className="text-[#c8a45d] not-italic font-serif"> reimagined.</em>
-                </h1>
-                <p
-                  className="mt-4 text-sm sm:text-base leading-relaxed text-[#c6cfd8] max-w-[560px]"
-                  data-testid="hero-description"
-                >
-                  Where India's timeless craftsmanship meets contemporary form. A considered edit of silver, pearls, gold and the hands that make them.
-                </p>
-
-                {/* Hero action buttons */}
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={scrollToCollection}
-                    className="inline-flex h-11 items-center justify-center gap-2.5 bg-[#c8a45d] px-7 text-[10px] uppercase tracking-[0.2em] text-[#14202e] font-bold transition-all hover:bg-[#d8b56f] cursor-pointer shadow-md"
-                    data-testid="hero-explore-button"
-                  >
-                    Explore The Collection
-                  </button>
-                  <button
-                    type="button"
-                    onClick={scrollToCraft}
-                    className="inline-flex h-11 items-center justify-center gap-2.5 border border-white/30 bg-white/5 backdrop-blur-xs px-6 text-[10px] uppercase tracking-[0.2em] text-[#f8f1e4] font-semibold transition-all hover:border-[#c8a45d] hover:text-[#c8a45d] cursor-pointer"
-                    data-testid="hero-craft-button"
-                  >
-                    Our Heritage Craft
-                  </button>
-                  <button
-                    type="button"
-                    onClick={toggleHeroAudio}
-                    className="absolute right-5 sm:right-8 lg:right-14 bottom-6 sm:bottom-10 z-20 flex items-center justify-center p-2 text-[#f8f1e4] hover:text-[#c8a45d] transition-colors cursor-pointer bg-transparent border-0 shadow-none outline-none focus:outline-none"
-                    data-testid="hero-audio-button"
-                    title={isHeroAudioPlaying ? 'Mute' : 'Unmute'}
-                    aria-label={isHeroAudioPlaying ? 'Mute' : 'Unmute'}
-                  >
-                    {isHeroAudioPlaying ? (
-                      <Volume2 size={24} className="text-[#c8a45d] drop-shadow-md transition-transform hover:scale-110" />
-                    ) : (
-                      <VolumeX size={24} className="text-[#f8f1e4]/80 hover:text-[#f8f1e4] drop-shadow-md transition-transform hover:scale-110" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Gulabi Meenakari 7-Stage Interactive Luxury Hero Section */}
+        <GulabiMeenakariHero
+          onExploreCollection={scrollToCollection}
+          onExploreHeritage={scrollToHeritage}
+        />
 
         {/* Manifesto Section */}
         <section

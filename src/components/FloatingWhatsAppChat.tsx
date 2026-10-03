@@ -10,11 +10,22 @@ import {
   Calendar,
   ExternalLink,
   MessageCircle,
+  Phone,
+  ShieldCheck,
+  Smartphone,
+  ArrowRight,
+  Loader2,
 } from 'lucide-react';
 import { WhatsAppIcon } from './TopBarIcons';
 import { BrandMark } from './BrandMark';
+import {
+  submitAiSensyLead,
+  getAiSensyWhatsAppUrl,
+  DEFAULT_WHATSAPP_NUMBER,
+  formatAiSensyPhoneNumber,
+} from '../services/aisensy';
 
-export const WHATSAPP_PHONE_NUMBER = '918985133732';
+export const WHATSAPP_PHONE_NUMBER = DEFAULT_WHATSAPP_NUMBER;
 
 interface ChatMessage {
   id: string;
@@ -24,14 +35,14 @@ interface ChatMessage {
   actionLink?: {
     label: string;
     url: string;
-    icon?: 'calendar' | 'external';
+    icon?: 'calendar' | 'external' | 'whatsapp';
   };
 }
 
 const DEFAULT_WELCOME_MESSAGE: ChatMessage = {
   id: 'msg-welcome-1',
   sender: 'concierge',
-  text: 'Namaste! Welcome to Navidha Pearls & Jewelry. How may our concierge team assist you with our handcrafted bridal, pearls, or custom commissions today?',
+  text: 'Namaste! Welcome to Navidha Pearls & Jewelry. Powered by AiSensy WhatsApp Business API. How may our concierge team assist you with our handcrafted bridal, pearls, or bespoke commissions today?',
   time: 'Just now',
 };
 
@@ -58,8 +69,24 @@ const QUICK_INQUIRIES = [
   },
 ];
 
-function getConciergeResponse(userText: string): { text: string; actionLink?: { label: string; url: string; icon?: 'calendar' | 'external' } } {
+function getConciergeResponse(userText: string): {
+  text: string;
+  actionLink?: { label: string; url: string; icon?: 'calendar' | 'external' | 'whatsapp' };
+} {
   const lower = userText.toLowerCase();
+
+  // If user appears to provide a phone number in the chat
+  const phoneMatch = userText.replace(/[^0-9]/g, '');
+  if (phoneMatch.length >= 10 && !lower.includes('bridal') && !lower.includes('price')) {
+    return {
+      text: `Thank you for sharing your WhatsApp number (+${phoneMatch.slice(-10)}). Our Concierge team has queued your inquiry via AiSensy WhatsApp Business API. You can also tap below to open the chat directly in your WhatsApp app.`,
+      actionLink: {
+        label: 'Open WhatsApp Conversation',
+        url: getAiSensyWhatsAppUrl(`Namaste Navidha Atelier, connecting via website floater with number ${phoneMatch.slice(-10)}.`),
+        icon: 'whatsapp',
+      },
+    };
+  }
 
   if (lower.includes('bridal') || lower.includes('wedding') || lower.includes('bride') || lower.includes('trousseau')) {
     return {
@@ -72,13 +99,28 @@ function getConciergeResponse(userText: string): { text: string; actionLink?: { 
     };
   }
 
-  if (lower.includes('pearl') || lower.includes('basra') || lower.includes('south sea') || lower.includes('certificate') || lower.includes('authentic') || lower.includes('quality') || lower.includes('grading')) {
+  if (
+    lower.includes('pearl') ||
+    lower.includes('basra') ||
+    lower.includes('south sea') ||
+    lower.includes('certificate') ||
+    lower.includes('authentic') ||
+    lower.includes('quality') ||
+    lower.includes('grading')
+  ) {
     return {
       text: 'Every Navidha pearl is personally hand-selected for natural nacre thickness, high-luster reflection, and pristine orient. Each piece arrives with our Maison Certificate of Authenticity and independent gemological laboratory testing report.',
     };
   }
 
-  if (lower.includes('appointment') || lower.includes('consultation') || lower.includes('visit') || lower.includes('book') || lower.includes('boutique') || lower.includes('meet')) {
+  if (
+    lower.includes('appointment') ||
+    lower.includes('consultation') ||
+    lower.includes('visit') ||
+    lower.includes('book') ||
+    lower.includes('boutique') ||
+    lower.includes('meet')
+  ) {
     return {
       text: 'We would be honored to host you for a private appointment at our flagship atelier or via a bespoke virtual video consultation with our Master Designer.',
       actionLink: {
@@ -89,7 +131,14 @@ function getConciergeResponse(userText: string): { text: string; actionLink?: { 
     };
   }
 
-  if (lower.includes('shipping') || lower.includes('delivery') || lower.includes('deliver') || lower.includes('track') || lower.includes('timeline') || lower.includes('courier')) {
+  if (
+    lower.includes('shipping') ||
+    lower.includes('delivery') ||
+    lower.includes('deliver') ||
+    lower.includes('track') ||
+    lower.includes('timeline') ||
+    lower.includes('courier')
+  ) {
     return {
       text: 'All Navidha jewelry is shipped via specialized tamper-evident armored courier with 100% full transit insurance. Domestic deliveries arrive within 2–5 business days, with live tracking provided upon dispatch.',
       actionLink: {
@@ -100,7 +149,13 @@ function getConciergeResponse(userText: string): { text: string; actionLink?: { 
     };
   }
 
-  if (lower.includes('size') || lower.includes('sizing') || lower.includes('ring') || lower.includes('bangle') || lower.includes('fit')) {
+  if (
+    lower.includes('size') ||
+    lower.includes('sizing') ||
+    lower.includes('ring') ||
+    lower.includes('bangle') ||
+    lower.includes('fit')
+  ) {
     return {
       text: 'We provide complimentary bespoke sizing for all rings, necklaces, and bangles. If you are unsure of your size, we can also dispatch our complimentary physical Navidha Ring Sizer kit to your address.',
       actionLink: {
@@ -111,15 +166,21 @@ function getConciergeResponse(userText: string): { text: string; actionLink?: { 
     };
   }
 
-  if (lower.includes('price') || lower.includes('cost') || lower.includes('quote') || lower.includes('rate') || lower.includes('estimate')) {
+  if (
+    lower.includes('price') ||
+    lower.includes('cost') ||
+    lower.includes('quote') ||
+    lower.includes('rate') ||
+    lower.includes('estimate')
+  ) {
     return {
-      text: 'Our handcrafted pieces range from contemporary everyday pearl adornments starting from ₹4,500 to royal bridal polki sets. Please let us know which craft or piece interests you, and our concierge will share tailored estimates.',
+      text: 'Our handcrafted pieces range from contemporary everyday pearl adornments starting from ₹4,500 to royal bridal polki sets. Please enter your WhatsApp number in the connection tab above, and our concierge will share tailored estimates and high-resolution lookbooks directly on WhatsApp.',
     };
   }
 
-  // Default helpful response
+  // Default response
   return {
-    text: 'Thank you for reaching out to Navidha! Our dedicated Jewelry Concierge team is here. You may also leave your contact number or email address here, and our specialist will personally follow up with you shortly.',
+    text: 'Thank you for contacting Navidha! Our dedicated Jewelry Concierge is connected with AiSensy WhatsApp Business API. You may share your WhatsApp number above to receive lookbooks, quotes, and video walkthroughs directly on your phone.',
   };
 }
 
@@ -129,6 +190,14 @@ export const FloatingWhatsAppChat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasUnreadIndicator, setHasUnreadIndicator] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // AiSensy Lead Capture State
+  const [showAiSensyConnect, setShowAiSensyConnect] = useState(false);
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [leadSuccessMsg, setLeadSuccessMsg] = useState<string | null>(null);
+
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
       const saved = sessionStorage.getItem('navidha_chat_messages');
@@ -158,7 +227,7 @@ export const FloatingWhatsAppChat: React.FC = () => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isTyping, isOpen]);
+  }, [messages, isTyping, isOpen, showAiSensyConnect]);
 
   // Close on Escape or click outside
   useEffect(() => {
@@ -225,7 +294,19 @@ export const FloatingWhatsAppChat: React.FC = () => {
     setInputVal('');
     setIsTyping(true);
 
-    // Simulate natural concierge typing response right within the site
+    // If user typed a phone number, automatically send lead to AiSensy in the background
+    const phoneDigits = cleanText.replace(/[^0-9]/g, '');
+    if (phoneDigits.length >= 10) {
+      submitAiSensyLead({
+        userName: 'Website Visitor',
+        phone: phoneDigits,
+        message: cleanText,
+        inquiryType: 'In-Chat Phone Share',
+        source: 'Navidha Floater Chat Window',
+      }).catch(() => {});
+    }
+
+    // Natural concierge typing response
     setTimeout(() => {
       const response = getConciergeResponse(cleanText);
       const newConciergeMsg: ChatMessage = {
@@ -238,7 +319,7 @@ export const FloatingWhatsAppChat: React.FC = () => {
 
       setMessages((prev) => [...prev, newConciergeMsg]);
       setIsTyping(false);
-    }, 750);
+    }, 650);
   };
 
   const handleResetChat = () => {
@@ -248,12 +329,68 @@ export const FloatingWhatsAppChat: React.FC = () => {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
+    setLeadSuccessMsg(null);
   };
 
   const handleExternalWhatsAppFallback = () => {
-    const latestUserMsg = [...messages].reverse().find((m) => m.sender === 'user')?.text || 'Hello Navidha Concierge, I would like assistance with your jewelry collection.';
-    const url = `https://wa.me/${WHATSAPP_PHONE_NUMBER}?text=${encodeURIComponent(latestUserMsg)}`;
+    const latestUserMsg =
+      [...messages].reverse().find((m) => m.sender === 'user')?.text ||
+      'Namaste Navidha Atelier, I would like assistance with your jewelry collection.';
+    const formattedMsg = `[AiSensy Ref: Web-Floater] ${latestUserMsg}`;
+    const url = getAiSensyWhatsAppUrl(formattedMsg, WHATSAPP_PHONE_NUMBER);
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  // Submit AiSensy WhatsApp Callback & Lead Request
+  const handleAiSensyLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPhone = leadPhone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) return;
+
+    setIsSubmittingLead(true);
+    const clientName = leadName.trim() || 'Valued Client';
+
+    // Find the latest user inquiry message
+    const latestInquiry = [...messages].reverse().find((m) => m.sender === 'user')?.text || 'Bespoke Jewelry Inquiry';
+
+    try {
+      const res = await submitAiSensyLead({
+        userName: clientName,
+        phone: cleanPhone,
+        message: latestInquiry,
+        inquiryType: 'WhatsApp Floater Lead Capture',
+        source: 'Navidha Floater Lead Form',
+      });
+
+      const formattedNumber = formatAiSensyPhoneNumber(cleanPhone);
+      setLeadSuccessMsg(`✓ WhatsApp Lead Registered (+${formattedNumber.slice(-10)})`);
+
+      // Add confirmation message to chat stream
+      const followUpMsg: ChatMessage = {
+        id: `concierge-aisensy-${Date.now()}`,
+        sender: 'concierge',
+        text: `Thank you, ${clientName}! Your request has been queued via AiSensy WhatsApp Business API. Our Master Artisan will message you on WhatsApp (+${formattedNumber.slice(-10)}) with our high-resolution lookbook and custom design details.`,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        actionLink: {
+          label: 'Open Chat in WhatsApp App',
+          url: res.whatsappUrl || getAiSensyWhatsAppUrl(`Namaste Navidha, I submitted my inquiry for ${latestInquiry}.`),
+          icon: 'whatsapp',
+        },
+      };
+
+      setMessages((prev) => [...prev, followUpMsg]);
+
+      setTimeout(() => {
+        setShowAiSensyConnect(false);
+        setLeadPhone('');
+        setLeadName('');
+        setLeadSuccessMsg(null);
+      }, 3500);
+    } catch (err) {
+      console.error('[AiSensy Lead Error]', err);
+    } finally {
+      setIsSubmittingLead(false);
+    }
   };
 
   return (
@@ -268,7 +405,7 @@ export const FloatingWhatsAppChat: React.FC = () => {
           role="dialog"
           aria-label="Navidha In-Website Live Concierge Chat"
           aria-modal="false"
-          className="absolute bottom-16 right-0 w-[calc(100vw-2.5rem)] sm:w-[380px] max-w-[400px] h-[520px] max-h-[calc(100vh-6rem)] bg-white rounded-xl shadow-2xl border border-black/15 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-200"
+          className="absolute bottom-16 right-0 w-[calc(100vw-2.5rem)] sm:w-[390px] max-w-[410px] h-[550px] max-h-[calc(100vh-6rem)] bg-white rounded-xl shadow-2xl border border-black/15 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-200"
           data-testid="whatsapp-chat-popover"
         >
           {/* Header */}
@@ -289,12 +426,16 @@ export const FloatingWhatsAppChat: React.FC = () => {
                   <h3 className="font-serif text-sm font-semibold tracking-wide text-[#fdfbf7]">
                     Navidha Concierge
                   </h3>
-                  <span className="text-[9px] bg-[#25D366]/20 text-[#25D366] px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider">
-                    Online
+                  {/* AiSensy Official WhatsApp Business API Verified Badge */}
+                  <span className="inline-flex items-center gap-0.5 text-[9px] bg-[#25D366]/20 text-[#25D366] px-1.5 py-0.5 rounded font-sans font-bold uppercase tracking-wider border border-[#25D366]/30">
+                    <ShieldCheck size={10} className="text-[#25D366]" />
+                    <span>AiSensy Verified</span>
                   </span>
                 </div>
-                <p className="text-[11px] text-[#c3cad5] flex items-center gap-1 font-sans">
-                  <span>Live Atelier Assistance</span>
+                <p className="text-[10px] text-[#c3cad5] flex items-center gap-1 font-sans">
+                  <span>Official WhatsApp Business API</span>
+                  <span className="text-[#c8a45d]">•</span>
+                  <span className="text-[#25D366] font-medium">+91 89851 33732</span>
                 </p>
               </div>
             </div>
@@ -321,30 +462,101 @@ export const FloatingWhatsAppChat: React.FC = () => {
             </div>
           </div>
 
-          {/* Sub-Header Notice */}
-          <div className="bg-[#f0ede6] px-3.5 py-1.5 border-b border-black/5 flex items-center justify-between text-[11px] text-[#555555] shrink-0">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
-              Direct in-site concierge chat
-            </span>
+          {/* Sub-Header Notice & Action Bar */}
+          <div className="bg-[#f0ede6] px-3.5 py-2 border-b border-black/8 flex items-center justify-between text-[11px] text-[#444444] shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowAiSensyConnect(!showAiSensyConnect)}
+              className="inline-flex items-center gap-1.5 text-[#14202e] hover:text-[#9a7a3e] font-semibold text-[11px] cursor-pointer"
+            >
+              <Smartphone size={13} className="text-[#25D366]" />
+              <span>{showAiSensyConnect ? 'Hide WhatsApp Form' : 'Get Lookbook on WhatsApp'}</span>
+            </button>
+
             <button
               type="button"
               onClick={handleExternalWhatsAppFallback}
-              className="text-[#14202e] hover:text-[#9a7a3e] font-medium inline-flex items-center gap-1 transition-colors cursor-pointer text-[10px]"
-              title="Open in WhatsApp app if preferred"
+              className="text-[#14202e] hover:text-[#25D366] font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer text-[10px] bg-white px-2 py-0.5 rounded border border-black/10 shadow-2xs"
+              title="Launch chat in WhatsApp application"
             >
-              <WhatsAppIcon size={11} className="text-[#25D366]" />
-              <span>WhatsApp App</span>
-              <ExternalLink size={10} />
+              <WhatsAppIcon size={12} className="text-[#25D366]" />
+              <span>Open in WhatsApp</span>
+              <ExternalLink size={9} />
             </button>
           </div>
+
+          {/* AiSensy WhatsApp Callback & Lead Capture Drawer */}
+          {showAiSensyConnect && (
+            <div className="bg-[#fcfaf7] border-b border-[#c8a45d]/30 p-3.5 text-xs animate-in slide-in-from-top-2 duration-200 shrink-0">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-serif text-[12px] font-semibold text-[#14202e] flex items-center gap-1.5">
+                  <Sparkles size={12} className="text-[#c8a45d]" />
+                  <span>AiSensy Direct WhatsApp Dispatch</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowAiSensyConnect(false)}
+                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+              <p className="text-[11px] text-[#666666] mb-2.5 leading-snug">
+                Enter your WhatsApp number to receive our private jewelry lookbook, pricing details, and artisan sketches directly on WhatsApp.
+              </p>
+
+              {leadSuccessMsg ? (
+                <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded text-emerald-800 text-[11px] font-medium flex items-center gap-2">
+                  <Check size={14} className="text-emerald-600" />
+                  <span>{leadSuccessMsg}</span>
+                </div>
+              ) : (
+                <form onSubmit={handleAiSensyLeadSubmit} className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Your Name (Optional)"
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      className="px-2.5 py-1.5 border border-black/20 text-xs rounded bg-white focus:outline-none focus:border-[#14202e]"
+                    />
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 98200 12345"
+                      value={leadPhone}
+                      onChange={(e) => setLeadPhone(e.target.value)}
+                      className="px-2.5 py-1.5 border border-black/20 text-xs rounded bg-white focus:outline-none focus:border-[#14202e]"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingLead || !leadPhone.trim()}
+                    className="w-full py-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-medium text-xs rounded flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    {isSubmittingLead ? (
+                      <>
+                        <Loader2 size={13} className="animate-spin" />
+                        <span>Connecting with AiSensy...</span>
+                      </>
+                    ) : (
+                      <>
+                        <WhatsAppIcon size={14} className="text-white" />
+                        <span>Send Lookbook & Connect via WhatsApp</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
 
           {/* Chat Messages Body */}
           <div className="flex-1 p-4 bg-[#f8f6f0] overflow-y-auto space-y-3 text-xs text-[#222222]">
             {/* Timestamp label */}
             <div className="text-center my-1">
               <span className="text-[10px] uppercase tracking-widest text-[#888888] bg-white/80 px-2.5 py-0.5 rounded-full border border-black/5 shadow-2xs">
-                Today
+                AiSensy Live Session
               </span>
             </div>
 
@@ -365,14 +577,22 @@ export const FloatingWhatsAppChat: React.FC = () => {
                 >
                   <p>{msg.text}</p>
 
-                  {/* Optional In-Chat Action Link (e.g. Book Consultation button inside the chat!) */}
+                  {/* Optional In-Chat Action Link */}
                   {msg.actionLink && (
                     <div className="mt-2.5 pt-2 border-t border-black/10">
                       <a
                         href={msg.actionLink.url}
-                        className="inline-flex items-center gap-1.5 bg-[#14202e] hover:bg-[#1f3147] text-[#fdfbf7] px-3 py-1.5 rounded text-[11px] font-medium tracking-wide transition-all shadow-xs"
+                        target={msg.actionLink.icon === 'whatsapp' ? '_blank' : '_self'}
+                        rel={msg.actionLink.icon === 'whatsapp' ? 'noopener noreferrer' : undefined}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-[11px] font-medium tracking-wide transition-all shadow-xs ${
+                          msg.actionLink.icon === 'whatsapp'
+                            ? 'bg-[#25D366] hover:bg-[#20ba59] text-white'
+                            : 'bg-[#14202e] hover:bg-[#1f3147] text-[#fdfbf7]'
+                        }`}
                       >
-                        {msg.actionLink.icon === 'calendar' ? (
+                        {msg.actionLink.icon === 'whatsapp' ? (
+                          <WhatsAppIcon size={13} className="text-white" />
+                        ) : msg.actionLink.icon === 'calendar' ? (
                           <Calendar size={12} className="text-[#c8a45d]" />
                         ) : (
                           <ExternalLink size={12} className="text-[#c8a45d]" />
@@ -453,7 +673,7 @@ export const FloatingWhatsAppChat: React.FC = () => {
               type="text"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Ask about custom bridal, pearls, sizing..."
+              placeholder="Ask a question or share WhatsApp number..."
               className="flex-1 px-3 py-2 text-xs border border-black/20 rounded-lg focus:border-[#14202e] focus:outline-none text-[#14202e] placeholder:text-[#999999]"
               data-testid="whatsapp-input"
             />
@@ -476,8 +696,9 @@ export const FloatingWhatsAppChat: React.FC = () => {
         {!isOpen && showTooltip && (
           <div className="hidden sm:flex items-center gap-2 mr-3 px-3.5 py-2 bg-[#14202e] text-white text-xs rounded-full shadow-lg border border-[#c8a45d]/40 animate-in fade-in slide-in-from-right-3 duration-300">
             <span className="inline-block w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
-            <span className="font-sans font-medium tracking-wide">
-              Live Concierge Chat
+            <span className="font-sans font-medium tracking-wide flex items-center gap-1.5">
+              <span>WhatsApp Concierge</span>
+              <span className="text-[10px] text-[#c8a45d] bg-[#c8a45d]/15 px-1.5 py-0.2 rounded font-mono">AiSensy</span>
             </span>
             <button
               type="button"

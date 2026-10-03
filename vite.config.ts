@@ -3,9 +3,26 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+function aisensyPlugin() {
+  return {
+    name: 'aisensy-api-middleware',
+    configureServer(server: any) {
+      server.middlewares.use(async (req: any, res: any, next: any) => {
+        if (req.url && req.url.startsWith('/api/aisensy/')) {
+          const { handleAiSensyApiRoute } = await import('./src/server/aisensyProxy');
+          const handled = await handleAiSensyApiRoute(req, res);
+          if (!handled) next();
+        } else {
+          next();
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), aisensyPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
