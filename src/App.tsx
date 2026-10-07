@@ -37,6 +37,8 @@ import { Footer } from './components/Footer';
 import { FaqPage } from './FaqPage';
 import { ShippingReturnsPage } from './ShippingReturnsPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
+import { SitemapPage } from './SitemapPage';
+import { CatalogManager } from './components/catalog/CatalogManager';
 import { CookieBanner } from './components/CookieBanner';
 import { ShippingCountryModal, SUPPORTED_COUNTRIES, ShippingCountry } from './components/ShippingCountryModal';
 import { ContactDrawer } from './components/ContactDrawer';
@@ -914,6 +916,26 @@ export default function App() {
 
     if (isPrivacyPath) {
       return <PrivacyPolicyPage />;
+    }
+
+    const isSitemapPath =
+      pathname === '/sitemap' ||
+      pathname.endsWith('/sitemap.html') ||
+      pathname.endsWith('/sitemap');
+
+    if (isSitemapPath) {
+      return <SitemapPage />;
+    }
+
+    const isCatalogPath =
+      pathname === '/admin' ||
+      pathname === '/admin/catalog' ||
+      pathname === '/catalog-manager' ||
+      pathname.endsWith('/catalog-manager.html') ||
+      pathname.endsWith('/catalog-manager');
+
+    if (isCatalogPath) {
+      return <CatalogManager />;
     }
 
     return (

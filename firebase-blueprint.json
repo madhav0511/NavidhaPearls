@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "E-Commerce fine jewelry product entity with complete catalog and SEO properties",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 150 },
+        "slug": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "sku": { "type": "string", "maxLength": 60 },
+        "price": { "type": "number" },
+        "sale_price": { "type": "number" },
+        "stock": { "type": "number" },
+        "low_stock_threshold": { "type": "number" },
+        "is_low_stock": { "type": "boolean" },
+        "category": { "type": "string", "maxLength": 100 },
+        "tags": { "type": "array" },
+        "attributes": { "type": "object" },
+        "images": { "type": "array" },
+        "seo": { "type": "object" },
+        "status": { "type": "string", "enum": ["draft", "published"] },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "title", "slug", "price", "sku", "stock", "category", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable audit log entry recording administrative catalog mutations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "action": { "type": "string", "enum": ["create", "update", "delete", "status_toggle", "seed"] },
+        "admin_email": { "type": "string", "maxLength": 150 },
+        "admin_uid": { "type": "string", "maxLength": 128 },
+        "target_id": { "type": "string", "maxLength": 128 },
+        "target_title": { "type": "string", "maxLength": 200 },
+        "details": { "type": "object" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "action", "admin_email", "target_id", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of e-commerce catalog products"
+    },
+    "/audit_logs/{auditLogId}": {
+      "schema": "AuditLog",
+      "description": "Collection of administrator activity audit logs"
+    }
+  }
+}

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useScrollToTopOnMount } from './hooks/useScrollToTop';
 import { CookiePreferencesModal, CookieConsentState } from './components/CookiePreferencesModal';
+import { BrandMark } from './components/BrandMark';
 
 export const PrivacyPolicyPage: React.FC = () => {
   useScrollToTopOnMount();
@@ -64,13 +65,8 @@ export const PrivacyPolicyPage: React.FC = () => {
 
           {/* Centered Brand Mark */}
           <div className="text-center">
-            <a href="/" className="inline-block">
-              <span className="font-serif text-2xl sm:text-3xl tracking-[0.22em] uppercase text-[#14202e] font-light">
-                Navidha
-              </span>
-              <span className="block text-[8px] uppercase tracking-[0.3em] text-[#9a7a3e] mt-0.5">
-                Pearls & Fine Silver
-              </span>
+            <a href="/" className="inline-flex items-center" aria-label="Navidha Home">
+              <BrandMark theme="light" />
             </a>
           </div>
 
@@ -435,6 +431,8 @@ export const PrivacyPolicyPage: React.FC = () => {
             <a href="/faq.html" className="hover:text-[#14202e] transition-colors">FAQ</a>
             <span>·</span>
             <a href="/shipping-returns.html" className="hover:text-[#14202e] transition-colors">Shipping & Returns</a>
+            <span>·</span>
+            <a href="/sitemap.html" className="hover:text-[#14202e] transition-colors" data-testid="privacy-footer-sitemap-link">Sitemap</a>
             <span>·</span>
             <button
               type="button"

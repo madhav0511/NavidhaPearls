@@ -472,7 +472,7 @@ END:VCALENDAR`;
           </div>
 
           <a href="/" className="flex items-center" aria-label="Navidha Home">
-            <BrandMark />
+            <BrandMark theme="light" />
           </a>
 
           <div className="hidden sm:flex items-center gap-3 text-xs text-[#667383]">
@@ -1188,8 +1188,19 @@ END:VCALENDAR`;
 
       {/* Footer */}
       <footer className="border-t border-[#14202e]/10 bg-[#fbf9f5] py-8 text-center text-xs text-[#777777]">
-        <div className="max-w-[1440px] mx-auto px-5">
+        <div className="max-w-[1440px] mx-auto px-5 space-y-2">
           <p>© {new Date().getFullYear()} Navidha Jewelry Atelier. Complimentary Insured Delivery Across India.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] uppercase tracking-[0.14em] text-[#9a7a3e]">
+            <a href="/" className="hover:text-[#14202e] hover:underline transition-colors">Boutique</a>
+            <span>·</span>
+            <a href="/faq.html" className="hover:text-[#14202e] hover:underline transition-colors">FAQ</a>
+            <span>·</span>
+            <a href="/shipping-returns.html" className="hover:text-[#14202e] hover:underline transition-colors">Shipping</a>
+            <span>·</span>
+            <a href="/privacy-policy.html" className="hover:text-[#14202e] hover:underline transition-colors">Privacy Policy</a>
+            <span>·</span>
+            <a href="/sitemap.html" className="hover:text-[#14202e] hover:underline font-semibold transition-colors" data-testid="consultation-footer-sitemap-link">Sitemap</a>
+          </div>
         </div>
       </footer>
     </div>

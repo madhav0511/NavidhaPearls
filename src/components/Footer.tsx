@@ -293,6 +293,15 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft 
                   Sizing & Measurement Guide
                 </a>
               </li>
+              <li>
+                <a
+                  href="/sitemap.html"
+                  className="hover:text-[#9a7a3e] transition-colors inline-flex items-center gap-1.5"
+                  data-testid="footer-link-sitemap"
+                >
+                  <span>Sitemap</span>
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -394,6 +403,14 @@ export const Footer: React.FC<FooterProps> = ({ onCategorySelect, onSelectCraft 
               data-testid="footer-bottom-privacy-link"
             >
               Privacy Policy
+            </a>
+            <span>·</span>
+            <a
+              href="/sitemap.html"
+              className="hover:underline hover:text-[#14202e] transition-colors"
+              data-testid="footer-bottom-sitemap-link"
+            >
+              Sitemap
             </a>
             <span>·</span>
             <button

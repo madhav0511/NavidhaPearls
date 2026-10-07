@@ -19,6 +19,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useScrollToTopOnMount } from './hooks/useScrollToTop';
+import { BrandMark } from './components/BrandMark';
 
 export const ShippingReturnsPage: React.FC = () => {
   useScrollToTopOnMount();
@@ -53,13 +54,8 @@ export const ShippingReturnsPage: React.FC = () => {
 
           {/* Centered Brand Mark */}
           <div className="text-center">
-            <a href="/" className="inline-block">
-              <span className="font-serif text-2xl sm:text-3xl tracking-[0.22em] uppercase text-[#14202e] font-light">
-                Navidha
-              </span>
-              <span className="block text-[8px] uppercase tracking-[0.3em] text-[#9a7a3e] mt-0.5">
-                HYDERABAD - INDIA
-              </span>
+            <a href="/" className="inline-flex items-center" aria-label="Navidha Home">
+              <BrandMark theme="light" />
             </a>
           </div>
 
@@ -526,6 +522,9 @@ export const ShippingReturnsPage: React.FC = () => {
             </a>
             <a href="/faq.html" className="hover:text-[#c8a45d]">
               Client FAQ
+            </a>
+            <a href="/sitemap.html" className="hover:text-[#c8a45d]" data-testid="shipping-footer-sitemap-link">
+              Sitemap
             </a>
           </div>
 

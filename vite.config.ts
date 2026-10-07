@@ -3,12 +3,21 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-function aisensyPlugin() {
+function serverApiPlugin() {
   return {
-    name: 'aisensy-api-middleware',
+    name: 'server-api-middleware',
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
-        if (req.url && req.url.startsWith('/api/aisensy/')) {
+        const url = req.url || '';
+        if (url.startsWith('/api/products') || url.startsWith('/api/upload') || url.startsWith('/api/audit-logs')) {
+          const { handleProductApiRoute } = await import('./src/server/productApi');
+          const handled = await handleProductApiRoute(req, res);
+          if (!handled) next();
+        } else if (url.startsWith('/api/seo/')) {
+          const { handleSeoApiRoute } = await import('./src/server/seoApi');
+          const handled = await handleSeoApiRoute(req, res);
+          if (!handled) next();
+        } else if (url.startsWith('/api/aisensy/')) {
           const { handleAiSensyApiRoute } = await import('./src/server/aisensyProxy');
           const handled = await handleAiSensyApiRoute(req, res);
           if (!handled) next();
@@ -22,7 +31,7 @@ function aisensyPlugin() {
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), aisensyPlugin()],
+    plugins: [react(), tailwindcss(), serverApiPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
@@ -44,6 +53,8 @@ export default defineConfig(() => {
           privacy: path.resolve(__dirname, 'privacy-policy.html'),
           consultation: path.resolve(__dirname, 'consultation.html'),
           widget: path.resolve(__dirname, 'appointment-booking-widget.html'),
+          sitemap: path.resolve(__dirname, 'sitemap.html'),
+          catalog: path.resolve(__dirname, 'catalog-manager.html'),
         },
       },
     },

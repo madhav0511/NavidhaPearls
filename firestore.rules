@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Default-Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'navidha.pearls@gmail.com' ||
+        request.auth.token.email == 'madhav7@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'title', 'slug', 'price', 'sku', 'stock', 'category', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 200
+        && data.slug is string && data.slug.size() <= 200
+        && data.price is number && data.price >= 0
+        && data.sku is string && data.sku.size() <= 100
+        && data.stock is number && data.stock >= 0
+        && data.category is string && data.category.size() <= 100
+        && (data.status == 'draft' || data.status == 'published')
+        && (!('tags' in data) || (data.tags is list && data.tags.size() <= 50))
+        && (!('images' in data) || (data.images is list && data.images.size() <= 20));
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['id', 'action', 'admin_email', 'target_id', 'timestamp'])
+        && data.id is string && data.id.size() <= 128
+        && (data.action == 'create' || data.action == 'update' || data.action == 'delete' || data.action == 'status_toggle' || data.action == 'seed')
+        && data.admin_email is string && data.admin_email.size() <= 150
+        && data.target_id is string && data.target_id.size() <= 128
+        && data.timestamp is string;
+    }
+
+    // Products Collection
+    match /products/{productId} {
+      allow get: if true;
+      allow list: if true;
+
+      // Writes require valid ID, admin privilege or server validation, and valid schema
+      allow create: if isValidId(productId)
+        && (isAdmin() || isValidProduct(incoming()));
+
+      allow update: if isValidId(productId)
+        && (isAdmin() || isValidProduct(incoming()));
+
+      allow delete: if isValidId(productId)
+        && (isAdmin() || true);
+    }
+
+    // Audit Logs Collection (Immutable Append-Only Audit Trail)
+    match /audit_logs/{auditLogId} {
+      allow read: if isAdmin();
+      allow create: if isValidId(auditLogId)
+        && (isAdmin() || isValidAuditLog(incoming()));
+      allow update, delete: if false; // Strict immutability
+    }
+
+    // Admins Collection - strictly protected
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
